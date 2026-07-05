@@ -18,6 +18,7 @@ app.use(
       "http://localhost:3000",
       "https://hall-management-crm.vercel.app",
       "https://shree-ganesh-notification-crm-final-five.vercel.app",
+      "https://hall-management-jgqqgt8v9-shubham-yadavs-projects-4026bfea.vercel.app",
     ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
     allowedHeaders: [
