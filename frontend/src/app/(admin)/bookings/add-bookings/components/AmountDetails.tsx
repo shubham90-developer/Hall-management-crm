@@ -17,18 +17,19 @@ const AmountDetails = () => {
               </div>
 
               {/* additional amount */}
-             <div className="col-md-3">
-          <label className="form-label">Additional Amount</label>
-          <input type="number" className="form-control" value={additionalAmount === 0 ? '' : additionalAmount} disabled />
-        </div>
+              <div className="col-md-3">
+                <label className="form-label">Additional Amount</label>
+                <input type="number" className="form-control" disabled />
+              </div>
+            </div>
 
-        <div className="col-md-3">
-          <label className="form-label">Starters + Chat Menu Amount</label>
-          <input type="number" className="form-control" value={specialMenuAmount === 0 ? '' : specialMenuAmount} disabled />
-        </div>
+            <div className="col-md-3">
+              <label className="form-label">Starters + Chat Menu Amount</label>
+              <input type="number" className="form-control" disabled />
+            </div>
 
-        <div className="col-md-3">
-          <label className="form-label">Subtotal Amount</label>
+            <div className="col-md-3">
+              <label className="form-label">Subtotal Amount</label>
 
               {/* subtotal amount */}
               <div className="col-md-3">
