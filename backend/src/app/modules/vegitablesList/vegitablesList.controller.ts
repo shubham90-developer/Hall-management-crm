@@ -54,7 +54,7 @@ export const getAllVegitablesList = async (
 ) => {
   try {
     const vegitablesList = await VegitableList.find().sort({
-      createdAt: -1,
+      createdAt: 1,
     });
 
     return res.status(200).json({

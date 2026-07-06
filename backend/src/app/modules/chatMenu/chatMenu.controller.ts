@@ -59,7 +59,7 @@ export const getAllChatMenu = async (
 ) => {
   try {
     const allChaatMenu = await ChatMenu.find()
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: 1 })
       .populate("categoryName", "categoryName");
 
     res.json({

@@ -113,7 +113,7 @@ export const getAllInvoices = async (
 ) => {
   try {
     const invoices = await populateInvoice(
-      Invoice.find({ status: { $ne: "Cancelled" } }).sort({ createdAt: -1 }),
+      Invoice.find({ status: { $ne: "Cancelled" } }).sort({ createdAt: 1 }),
     );
 
     res.json({

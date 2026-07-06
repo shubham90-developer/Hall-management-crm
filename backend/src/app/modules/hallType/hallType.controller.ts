@@ -52,7 +52,7 @@ export const getAllHallType = async (
 ) => {
   try {
     const hallTypes = await HallType.find().sort({
-      createdAt: -1,
+      createdAt: 1,
     });
 
     return res.status(200).json({

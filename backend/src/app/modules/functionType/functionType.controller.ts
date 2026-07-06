@@ -48,7 +48,7 @@ export const getAllFunctionType = async (
 ) => {
   try {
     const functionTypes = await FunctionType.find().sort({
-      createdAt: -1,
+      createdAt: 1,
     });
 
     return res.status(200).json({

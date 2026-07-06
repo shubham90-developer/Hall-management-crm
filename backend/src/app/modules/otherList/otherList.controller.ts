@@ -55,7 +55,7 @@ export const getAllOtherList = async (
 ) => {
   try {
     const otherList = await OtherList.find().sort({
-      createdAt: -1,
+      createdAt: 1,
     });
 
     return res.status(200).json({

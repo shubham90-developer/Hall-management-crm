@@ -6,7 +6,7 @@ import { IOtherMenu } from '@/store/otherMenuApi'
 import { IOtherList } from '@/store/otherListApi'
 import { IStartersMenu } from '@/store/startersMenuApi'
 import { IChatMenu } from '@/store/chatMenuApi'
-
+import { SEATING_PRICES } from './Othermenu'
 interface PricingForm {
   discount: number
 }
@@ -27,6 +27,7 @@ interface Props {
   selectedStarters?: string[]
   chatMenuList?: IChatMenu[]
   selectedChatMenu?: string[]
+  seatingArrangement: string
   onCalculatedChange: (values: {
     totalAmount: number
     additionalAmount: number
@@ -54,6 +55,7 @@ const AmountDetails = ({
   selectedStarters = [],
   chatMenuList = [],
   selectedChatMenu = [],
+  seatingArrangement,
   onCalculatedChange,
 }: Props) => {
   const { data: gstData } = useGetGstQuery()
@@ -76,9 +78,9 @@ const AmountDetails = ({
     const chatMenuTotal = chatMenuList.filter((c) => selectedChatMenu.includes(c._id)).reduce((sum, c) => sum + Number(c.price), 0)
     return guests * (startersTotal + chatMenuTotal)
   }, [guests, startersMenuList, selectedStarters, chatMenuList, selectedChatMenu])
-
+  const seatingAmount = useMemo(() => guests * (SEATING_PRICES[seatingArrangement] || 0), [guests, seatingArrangement])
   // merge starters+chat into total amount — no longer shown as a separate field
-  const combinedTotalAmount = useMemo(() => totalAmount + specialMenuAmount, [totalAmount, specialMenuAmount])
+  const combinedTotalAmount = useMemo(() => totalAmount + specialMenuAmount + seatingAmount, [totalAmount, specialMenuAmount, seatingAmount])
 
   const subtotalamount = useMemo(() => combinedTotalAmount + additionalAmount, [combinedTotalAmount, additionalAmount])
   const gstAmount = useMemo(() => (subtotalamount * (gstData?.gst || 0)) / 100, [subtotalamount, gstData])

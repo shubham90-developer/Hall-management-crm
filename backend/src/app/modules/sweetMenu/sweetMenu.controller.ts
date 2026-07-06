@@ -69,7 +69,7 @@ export const getAllSweetMenu = async (
     const sweetMenu = await SweetMenu.find()
       .populate("buffetName", "buffetName")
       .sort({
-        createdAt: -1,
+        createdAt: 1,
       });
 
     return res.status(200).json({

@@ -56,7 +56,7 @@ export const getAllStartersCategory = async (
 ) => {
   try {
     const startersCategories = await StartersCategory.find().sort({
-      createdAt: -1,
+      createdAt: 1,
     });
 
     res.status(200).json({

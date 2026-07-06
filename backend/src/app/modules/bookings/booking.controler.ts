@@ -127,7 +127,7 @@ export const getAllBookings = async (
   next: NextFunction,
 ) => {
   try {
-    const allBookings = await Booking.find({ status: { $ne: "Cancelled" } })
+    const allBookings = await Booking.find({})
       .populate({
         path: "enquiry",
         populate: { path: "functionName", model: "FunctionType" },
@@ -153,7 +153,7 @@ export const getAllBookings = async (
       .populate("starters")
       .populate("chatMenu")
       .populate({ path: "other.id", model: "OtherList" })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: 1 });
 
     res.json({
       success: true,

@@ -70,7 +70,7 @@ export const getAllOtherMenu = async (
     const getOtherMenu = await OtherMenu.find()
       .populate("buffetName", "buffetName")
       .sort({
-        createdAt: -1,
+        createdAt: 1,
       });
 
     res.json({

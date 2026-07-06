@@ -56,7 +56,7 @@ export const getAllChatCategory = async (
 ) => {
   try {
     const chatCategories = await ChatCategory.find().sort({
-      createdAt: -1,
+      createdAt: 1,
     });
 
     res.status(200).json({

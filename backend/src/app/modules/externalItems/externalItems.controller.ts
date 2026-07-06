@@ -52,7 +52,7 @@ export const getAllExternalItems = async (
 ) => {
   try {
     const externalItems = await ExternalItems.find().populate("buffet").sort({
-      createdAt: -1,
+      createdAt: 1,
     });
 
     return res.status(200).json({

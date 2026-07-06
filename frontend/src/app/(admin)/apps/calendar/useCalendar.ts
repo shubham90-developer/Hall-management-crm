@@ -38,7 +38,9 @@ const useCalendar = () => {
       const isUpcoming = bookingDate > in3Days
 
       let className = ''
-      if (isPast) {
+      if (booking.status === 'Cancelled') {
+        className = 'bg-danger text-white' // red — cancelled
+      } else if (isPast) {
         className = 'bg-secondary text-white' // grey — past
       } else if (isNext3Days) {
         className = 'bg-warning text-dark' // yellow — next 3 days

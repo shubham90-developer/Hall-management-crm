@@ -153,12 +153,12 @@ export const MENU_ITEMS: MenuItemType[] = [
     icon: 'solar:checklist-minimalistic-bold-duotone',
     url: '/other-list',
   },
-  {
-    key: 'external-list',
-    label: 'External Items',
-    icon: 'solar:cart-large-bold-duotone',
-    url: '/external-list',
-  },
+  // {
+  //   key: 'external-list',
+  //   label: 'External Items',
+  //   icon: 'solar:cart-large-bold-duotone',
+  //   url: '/external-list',
+  // },
   {
     key: 'GST',
     label: 'GST',

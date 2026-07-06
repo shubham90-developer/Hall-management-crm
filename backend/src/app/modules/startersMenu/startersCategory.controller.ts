@@ -68,7 +68,7 @@ export const getAllStartersMenu = async (
   try {
     const startersMenus = await StartersMenu.find()
       .populate("categoryName", "categoryName")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: 1 });
 
     res.status(200).json({
       success: true,

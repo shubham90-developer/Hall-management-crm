@@ -72,7 +72,7 @@ export const getAllEnquiry = async (
   try {
     const getEnquiries = await Enquiry.find()
       .populate("functionName", "functionName")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: 1 });
 
     res.status(200).json({
       success: true,

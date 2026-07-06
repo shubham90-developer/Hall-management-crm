@@ -715,7 +715,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
                           onChange={(e) => setBasicForm((p) => ({ ...p, status: e.target.value as any }))}>
                           <option value="Confirmed">✅ Confirmed</option>
                           <option value="Pencil">✏️ Pencil</option>
-                          {isEditable && <option value="Cancel">❌ Cancel</option>}
+                          {isEditable && <option value="Cancelled">❌ Cancel</option>}
                         </select>
                       </Col>
                     </Row>
@@ -928,6 +928,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
                       selectedStarters={selectedStarters}
                       chatMenuList={chatMenuList}
                       selectedChatMenu={selectedChatMenu}
+                      seatingArrangement={menuForm.seatingArrangement}
                       onCalculatedChange={(values) => setPricingForm((p) => ({ ...p, ...values }))}
                     />
                   )}
@@ -1033,6 +1034,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
                   startersMenuList={startersMenuList}
                   selectedStarters={selectedStarters}
                   chatMenuList={chatMenuList}
+                  seatingArrangement={menuForm.seatingArrangement}
                   selectedChatMenu={selectedChatMenu}
                   onCalculatedChange={(values) => setPricingForm((p) => ({ ...p, ...values }))}
                 />

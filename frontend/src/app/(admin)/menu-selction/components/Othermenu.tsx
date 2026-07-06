@@ -3,6 +3,11 @@ import React, { useState } from 'react'
 import { Card, CardBody, CardHeader } from 'react-bootstrap'
 import { IOtherList } from '@/store/otherListApi'
 
+export const SEATING_PRICES: Record<string, number> = {
+  Standard: 15,
+  Premium: 30,
+  Pangat: 50,
+}
 interface Props {
   otherList: IOtherList[]
   selectedOther: { id: string; startTime: string; endTime: string }[]
@@ -87,8 +92,10 @@ const OtherMenu = ({ otherList, selectedOther, onOtherChange, seatingArrangement
         <label className="form-label">🍽️ Seating Arrangement for Meal</label>
         <select className="form-select" value={seatingArrangement} onChange={(e) => onSeatingChange(e.target.value)}>
           <option value="">Select Dining Type</option>
-          <option value="Buffet">🥗 Buffet</option>
-          <option value="Pangat">🍛 Pangat</option>
+
+          <option value="Standard">🥗 स्टँडर्ड बुफे - ₹15/प्लेट</option>
+          <option value="Premium">🍛 प्रीमियम बुफे - ₹30/प्लेट</option>
+          <option value="Pangat">🍛 पंगत - ₹50/प्लेट</option>
         </select>
       </div>
     </Card>

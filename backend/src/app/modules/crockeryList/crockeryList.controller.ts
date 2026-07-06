@@ -53,7 +53,7 @@ export const getAllCrockeryList = async (
 ) => {
   try {
     const crockeryList = await CrockeryList.find().sort({
-      createdAt: -1,
+      createdAt: 1,
     });
 
     return res.status(200).json({
