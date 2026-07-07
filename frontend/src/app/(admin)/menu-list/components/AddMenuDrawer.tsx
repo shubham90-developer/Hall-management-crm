@@ -247,7 +247,6 @@ const AddMenuDrawer = ({ onAdd }: any) => {
                                 <input
                                   type="text"
                                   className="form-control form-control-sm"
-                                  placeholder="e.g. 2 pcs"
                                   disabled={!isChecked}
                                   value={entry?.qty || ''}
                                   onChange={(e) => handleQtyInputChange('crocekryName', option.value, e.target.value)}
@@ -296,7 +295,6 @@ const AddMenuDrawer = ({ onAdd }: any) => {
                                 <input
                                   type="text"
                                   className="form-control form-control-sm"
-                                  placeholder="e.g. 1 kg"
                                   disabled={!isChecked}
                                   value={entry?.qty || ''}
                                   onChange={(e) => handleQtyInputChange('grosaryName', option.value, e.target.value)}
@@ -345,7 +343,6 @@ const AddMenuDrawer = ({ onAdd }: any) => {
                                 <input
                                   type="text"
                                   className="form-control form-control-sm"
-                                  placeholder="e.g. 500 g"
                                   disabled={!isChecked}
                                   value={entry?.qty || ''}
                                   onChange={(e) => handleQtyInputChange('vegitablesName', option.value, e.target.value)}

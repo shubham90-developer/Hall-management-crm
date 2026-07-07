@@ -46,6 +46,7 @@ export const createInvoice = async (
     const {
       booking,
       guests,
+      baseGuests,
       totalAmount,
       additionalAmount,
       gst,
@@ -81,6 +82,7 @@ export const createInvoice = async (
       invoiceNo,
       booking,
       guests,
+      baseGuests: baseGuests ?? guests,
       totalAmount,
       additionalAmount,
       gst,

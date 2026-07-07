@@ -108,7 +108,9 @@ const Invoices = () => {
                     <td>{item.booking?.enquiry?.mobileNo}</td>
                     <td>{item.booking?.bookingDate ? new Date(item.booking.bookingDate).toLocaleDateString('en-IN') : '-'}</td>
                     <td>{item.booking?.functionType?.functionName}</td>
-                    <td>{item.guests}</td>
+                    <td>
+                      {item.baseGuests > 0 && item.guests > item.baseGuests ? `${item.baseGuests} + ${item.guests - item.baseGuests}` : item.guests}
+                    </td>
                     <td>₹{item.grandTotal}</td>
                     <td>
                       <span className={`badge ${item.status === 'Active' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'}`}>

@@ -4,6 +4,7 @@ export interface IInvoice extends Document {
   invoiceNo: string;
   booking: Types.ObjectId;
   guests: Number;
+  baseGuests: Number;
   totalAmount: Number;
   additionalAmount: Number;
   subtotalamount: Number;

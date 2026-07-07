@@ -8,6 +8,7 @@ const objectId = (field: string) =>
 export const CreateInvoiceValidation = z.object({
   booking: objectId("Booking"),
   guests: z.number().min(1, "Guests must be at least 1"),
+  baseGuests: z.number().min(0).optional(),
   totalAmount: z.number().min(0).default(0),
   additionalAmount: z.number().min(0).default(0),
   gst: z.number().min(0).default(0),

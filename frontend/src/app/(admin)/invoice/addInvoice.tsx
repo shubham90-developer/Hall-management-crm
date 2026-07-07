@@ -45,6 +45,7 @@ const AddInvoiceDrawer = () => {
 
   // ── Step 3: guests + pricing (same formula as quotation) ──
   const [guests, setGuests] = useState(0)
+  const [baseGuests, setBaseGuests] = useState(0) // ★ NEW — original guest count from booking
   const [advance, setAdvance] = useState(0)
   const [discount, setDiscount] = useState(0)
   const [calculated, setCalculated] = useState({
@@ -61,6 +62,7 @@ const AddInvoiceDrawer = () => {
   useEffect(() => {
     if (selectedBooking) {
       setGuests(selectedBooking.guests || 0)
+      setBaseGuests(selectedBooking.guests || 0) // ★ NEW — captured once when booking is chosen
       setAdvance(selectedBooking.advance || 0)
     }
   }, [selectedBooking])
@@ -73,6 +75,7 @@ const AddInvoiceDrawer = () => {
     setSelectedEnquiry(null)
     setSelectedBooking(null)
     setGuests(0)
+    setBaseGuests(0) // ★ NEW
     setAdvance(0)
     setDiscount(0)
   }
@@ -94,6 +97,7 @@ const AddInvoiceDrawer = () => {
       await createInvoice({
         booking: selectedBooking._id,
         guests,
+        baseGuests, // ★ NEW
         totalAmount: calculated.totalAmount,
         additionalAmount: calculated.additionalAmount,
         gst: calculated.gst,

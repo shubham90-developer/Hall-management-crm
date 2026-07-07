@@ -7,6 +7,7 @@ export interface IInvoice {
   invoiceNo: string
   booking: IBooking
   guests: number
+  baseGuests: number
   totalAmount: number
   additionalAmount: number
   subtotalamount: number
@@ -31,6 +32,7 @@ interface IInvoiceResponse {
 export interface ICreateInvoice {
   booking: string
   guests: number
+  baseGuests?: number
   totalAmount: number
   additionalAmount: number
   gst: number

@@ -405,7 +405,7 @@ const ViewInvoice = ({ invoiceId }: Props) => {
                 <div className="mt-4 pt-3 border-top">
                   <h6 className="fw-bold mb-3">📋 नियम व अटी</h6>
 
-                  <ol className="ps-3 mb-0">
+                  <ol className="ps-3 mb-0" style={{ listStyle: 'none' }}>
                     {termsData?.map((item: any, index: number) => (
                       <li key={item._id || index} className="small text-muted mb-3">
                         <div

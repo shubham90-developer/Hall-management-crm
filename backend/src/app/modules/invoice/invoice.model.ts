@@ -19,6 +19,7 @@ const InvoiceSchema = new Schema<IInvoice>(
       required: true,
     },
     guests: { type: Number, default: 0 },
+    baseGuests: { type: Number, default: 0 },
     totalAmount: { type: Number, default: 0 },
     additionalAmount: { type: Number, default: 0 },
     subtotalamount: { type: Number, default: 0 },
