@@ -10,6 +10,9 @@ export interface IBooking {
     mobileNo: string
     alternateMobileNo: string
     email: string
+    date1?: string
+    date2?: string
+    date3?: string
     functionName: {
       _id: string
       functionName: string
@@ -18,6 +21,7 @@ export interface IBooking {
   address: string
   gstNo?: string
   bookingDate: string
+  functionDate: string
   functionType: {
     _id: string
     functionName: string
@@ -71,6 +75,7 @@ interface ICreateBooking {
   address: string
   gstNo?: string
   bookingDate: string
+  functionDate: string
   functionType: string
   hall: string
   startTime: string

@@ -13,7 +13,7 @@ export interface IBooking extends Document {
   endTime: Number;
   advance: Number;
   paymentMethod: String;
-  status: "Confirmed" | "Pencil" | "Cancelled";
+  status: "Confirmed" | "Pencil" | "Cancelled" | "Gst" | "NoGst";
   Muhurat: String;
   guests: Number;
   seatingArrangement: String;

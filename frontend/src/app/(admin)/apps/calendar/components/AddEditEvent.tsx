@@ -51,11 +51,11 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
   const [enquiryList, setEnquiryList] = useState<IEnquiry[]>([])
   const [bookingDate, setBookingDate] = useState('')
   const [isAdvance, setIsAdvance] = useState(false)
-  const [showAdvanceModal, setShowAdvanceModal] = useState(false)
-  const [mainModalVisible, setMainModalVisible] = useState(true)
-  const totalSteps = 7
-  const isSpecialMenuTab = selectedMenu === 'starters' || selectedMenu === 'chatmenu'
 
+  const [mainModalVisible, setMainModalVisible] = useState(true)
+  const totalSteps = 8
+  const isSpecialMenuTab = selectedMenu === 'starters' || selectedMenu === 'chatmenu'
+  const [enquiryDates, setEnquiryDates] = useState<{ date1?: string; date2?: string; date3?: string }>({})
   // ── Step 1 State ────────────────────────────────────────────────
   const [basicForm, setBasicForm] = useState({
     enquiryId: '',
@@ -65,6 +65,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
     email: '',
     address: '',
     gstNo: '',
+    functionDate: '',
     functionType: '',
     hall: '',
     startTime: '',
@@ -151,6 +152,11 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
   useEffect(() => {
     if (existingBooking && isEditable) {
       setBookingId(existingBooking._id)
+      setEnquiryDates({
+        date1: existingBooking.enquiry.date1 ? new Date(existingBooking.enquiry.date1).toISOString().split('T')[0] : '',
+        date2: existingBooking.enquiry.date2 ? new Date(existingBooking.enquiry.date2).toISOString().split('T')[0] : '',
+        date3: existingBooking.enquiry.date3 ? new Date(existingBooking.enquiry.date3).toISOString().split('T')[0] : '',
+      })
       setBookingDate(new Date(existingBooking.bookingDate).toLocaleDateString('en-IN'))
       setIsAdvance(existingBooking.advance > 0)
       setBasicForm({
@@ -166,6 +172,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
         startTime: minutesToTime(Number(existingBooking.startTime)),
         endTime: minutesToTime(Number(existingBooking.endTime)),
         advance: existingBooking.advance,
+        functionDate: existingBooking.functionDate ? new Date(existingBooking.functionDate).toISOString().split('T')[0] : '',
         paymentMethod: existingBooking.paymentMethod,
         status: existingBooking.status,
       })
@@ -237,6 +244,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
       setSelectedMenu(buffetList.length > 0 ? buffetList[0]._id : '')
       setBookingDate('')
       setIsAdvance(false)
+      setEnquiryDates({})
       setBasicForm({
         enquiryId: '',
         customerName: '',
@@ -245,6 +253,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
         email: '',
         address: '',
         gstNo: '',
+        functionDate: '',
         functionType: '',
         hall: '',
         startTime: '',
@@ -282,6 +291,11 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
 
   const autofillEnquiry = (data: IEnquiry) => {
     setPhone(data.mobileNo)
+    setEnquiryDates({
+      date1: data.date1 ? new Date(data.date1).toISOString().split('T')[0] : '',
+      date2: data.date2 ? new Date(data.date2).toISOString().split('T')[0] : '',
+      date3: data.date3 ? new Date(data.date3).toISOString().split('T')[0] : '',
+    })
     setBasicForm((prev) => ({
       ...prev,
       enquiryId: data._id,
@@ -290,6 +304,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
       alternateMobileNo: data.alternateMobileNo,
       email: data.email,
       functionType: data.functionName?._id || '',
+      functionDate: data.date1 ? new Date(data.date1).toISOString().split('T')[0] : '',
     }))
   }
 
@@ -298,6 +313,14 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
     try {
       if (!basicForm.enquiryId) {
         toast.error('Please search and select a customer')
+        return
+      }
+      if (!basicForm.functionDate) {
+        toast.error('Function Date is required')
+        return
+      }
+      if (!basicForm.functionDate) {
+        toast.error('Function Date is required')
         return
       }
       if (!basicForm.address) {
@@ -326,6 +349,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
         address: basicForm.address,
         gstNo: basicForm.gstNo,
         bookingDate: selectedDate,
+        functionDate: basicForm.functionDate,
         functionType: basicForm.functionType,
         hall: basicForm.hall,
         startTime: basicForm.startTime,
@@ -338,7 +362,6 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
       setBookingId(result._id)
       toast.success('Booking saved!')
       setMainModalVisible(false)
-      setShowAdvanceModal(true)
     } catch (error: any) {
       toast.error(error?.data?.message || 'Something went wrong')
     }
@@ -374,6 +397,14 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
       toast.error('Please enter number of guests')
       return
     }
+    if (!menuForm.guests || menuForm.guests < 1) {
+      toast.error('Please enter number of guests')
+      return
+    }
+    if (!basicForm.paymentMethod || basicForm.paymentMethod === '--') {
+      toast.error('Please select a payment method')
+      return
+    }
 
     try {
       if (!bookingId) {
@@ -407,6 +438,13 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
               startTime: o.startTime || '',
               endTime: o.endTime || '',
             })),
+        },
+      }).unwrap()
+      await updateBasic({
+        id: bookingId,
+        data: {
+          advance: basicForm.advance,
+          paymentMethod: basicForm.paymentMethod,
         },
       }).unwrap()
       toast.success('Menu saved!')
@@ -623,6 +661,24 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
                           disabled
                         />
                       </Col>
+                      <Col md={isEditable ? 4 : 3}>
+                        <label className="form-label">📅 Function Date</label>
+                        {isEditable ? (
+                          <select
+                            className="form-select"
+                            value={basicForm.functionDate}
+                            onChange={(e) => setBasicForm((p) => ({ ...p, functionDate: e.target.value }))}>
+                            <option value="">Select Date</option>
+                            {([enquiryDates.date1, enquiryDates.date2, enquiryDates.date3].filter(Boolean) as string[]).map((iso) => (
+                              <option key={iso} value={iso}>
+                                {new Date(iso).toLocaleDateString('en-IN')}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <input className="form-control" value={basicForm.functionDate} disabled />
+                        )}
+                      </Col>
 
                       <Col md={3}>
                         <label className="form-label">🏛️ Hall</label>
@@ -715,6 +771,8 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
                           onChange={(e) => setBasicForm((p) => ({ ...p, status: e.target.value as any }))}>
                           <option value="Confirmed">✅ Confirmed</option>
                           <option value="Pencil">✏️ Pencil</option>
+                          <option value="Gst">🧾 Confirmed with GST</option>
+                          <option value="NoGst">🚫🧾 Confirmed without GST (No Bill)</option>
                           {isEditable && <option value="Cancelled">❌ Cancel</option>}
                         </select>
                       </Col>
@@ -909,9 +967,52 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
                       onSeatingChange={(val) => setMenuForm((p) => ({ ...p, seatingArrangement: val }))}
                     />
                   )}
+                  {/* Menu Step 7 — Advance & Payment Method */}
+                  {menuStep === 7 && (
+                    <div className="card border-0 shadow-sm">
+                      <div className="card-header bg-light-subtle">
+                        <h5 className="mb-0">💵 Advance &amp; Payment</h5>
+                      </div>
+                      <div className="card-body">
+                        <Row className="g-3">
+                          <Col md={6}>
+                            <label className="form-label">💵 Advance Amount</label>
+                            <input
+                              type="number"
+                              className="form-control"
+                              placeholder="Enter advance amount"
+                              value={basicForm.advance === 0 ? '' : basicForm.advance}
+                              onChange={(e) => setBasicForm((p) => ({ ...p, advance: Number(e.target.value) }))}
+                            />
+                          </Col>
+                          <Col md={6}>
+                            <label className="form-label">💳 Payment Method</label>
+                            <select
+                              className="form-select"
+                              value={basicForm.paymentMethod}
+                              onChange={(e) => setBasicForm((p) => ({ ...p, paymentMethod: e.target.value }))}>
+                              <option value="--" disabled>
+                                Select Payment Method
+                              </option>
+                              <option value="Cash">💵 Cash</option>
+                              <option value="UPI">📱 UPI</option>
+                              <option value="PhonePe">📲 PhonePe</option>
+                              <option value="Google Pay">💳 Google Pay</option>
+                              <option value="Paytm">💰 Paytm</option>
+                              <option value="Bank Transfer">🏦 Bank Transfer</option>
+                              <option value="Cheque">🧾 Cheque</option>
+                              <option value="Card">💳 Debit / Credit Card</option>
+                              <option value="Net Banking">🌐 Net Banking</option>
+                              <option value="Pending">⏳ Pending</option>
+                            </select>
+                          </Col>
+                        </Row>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Menu Step 7 — Pricing */}
-                  {menuStep === 7 && (
+                  {menuStep === 8 && (
                     <AmountDetails
                       pricingForm={pricingForm}
                       onPricingChange={(key, val) => setPricingForm((p) => ({ ...p, [key]: val }))}
@@ -984,13 +1085,13 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
                       </button>
                     )}
 
-                    {menuStep === 6 && (
+                    {menuStep === 7 && (
                       <button type="button" className="btn btn-success" onClick={handleSaveMenu} disabled={savingMenu}>
                         {savingMenu ? 'Saving...' : '💾 Save Menu'}
                       </button>
                     )}
 
-                    {menuStep === 7 && (
+                    {menuStep === 8 && (
                       <button type="button" className="btn btn-warning" onClick={handleSavePricing} disabled={savingPrice}>
                         {savingPrice ? 'Saving...' : '💰 Save Pricing'}
                       </button>
@@ -1048,95 +1149,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
           )}
         </ModalBody>
       </Modal>
-      <Modal show={showAdvanceModal} onHide={() => setShowAdvanceModal(false)} centered>
-        <ModalHeader closeButton>
-          <ModalTitle>Advance Payment</ModalTitle>
-        </ModalHeader>
-        <ModalBody>
-          {!isAdvance ? (
-            <div className="text-center">
-              <p>Would you like to receive an Advance Payment?</p>
-              <div className="d-flex justify-content-center gap-2">
-                <Button
-                  variant="light"
-                  onClick={async () => {
-                    if (!bookingId) {
-                      toast.error('Please save booking first')
-                      return
-                    }
-                    try {
-                      await updateBasic({
-                        id: bookingId,
-                        data: { advance: 0, paymentMethod: basicForm.paymentMethod || 'Pending' },
-                      }).unwrap()
-                      setShowAdvanceModal(false)
-                      toggle()
-                    } catch (error: any) {
-                      toast.error(error?.data?.message || 'Failed to save advance')
-                    }
-                  }}>
-                  No
-                </Button>
-                <Button variant="primary" onClick={() => setIsAdvance(true)}>
-                  Yes
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <>
-              <div className="mb-3">
-                <label className="form-label">💵 Advance Amount</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={basicForm.advance === 0 ? '' : basicForm.advance}
-                  onChange={(e) => setBasicForm((p) => ({ ...p, advance: Number(e.target.value) }))}
-                />
-              </div>
-              <div className="mb-3">
-                <label className="form-label">💳 Payment Method</label>
-                <select
-                  className="form-select"
-                  value={basicForm.paymentMethod}
-                  onChange={(e) => setBasicForm((p) => ({ ...p, paymentMethod: e.target.value }))}>
-                  <option value="Cash">💵 Cash</option>
-                  <option value="UPI">📱 UPI</option>
-                  <option value="PhonePe">📲 PhonePe</option>
-                  <option value="Google Pay">💳 Google Pay</option>
-                  <option value="Paytm">💰 Paytm</option>
-                  <option value="Bank Transfer">🏦 Bank Transfer</option>
-                  <option value="Cheque">🧾 Cheque</option>
-                </select>
-              </div>
-              <div className="d-flex justify-content-end">
-                <Button
-                  variant="success"
-                  onClick={async () => {
-                    if (!bookingId) {
-                      toast.error('Please save booking first')
-                      return
-                    }
-                    try {
-                      await updateBasic({
-                        id: bookingId,
-                        data: {
-                          advance: basicForm.advance,
-                          paymentMethod: basicForm.paymentMethod,
-                        },
-                      }).unwrap()
-                      setShowAdvanceModal(false)
-                      toggle()
-                    } catch (error: any) {
-                      toast.error(error?.data?.message || 'Failed to save advance')
-                    }
-                  }}>
-                  Confirm & Save
-                </Button>
-              </div>
-            </>
-          )}
-        </ModalBody>
-      </Modal>
+
       <style>{`
         .booking-tab-card {
           background: #fff;

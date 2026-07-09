@@ -147,16 +147,6 @@ const AmountDetails = ({
         </div>
 
         <div className="col-md-3">
-          <label className="form-label">Advance</label>
-          <input
-            type="number"
-            className="form-control"
-            value={advance === 0 ? '' : advance}
-            onChange={(e) => onAdvanceChange(Number(e.target.value))}
-          />
-        </div>
-
-        <div className="col-md-3">
           <label className="form-label">Pending Amount</label>
           <input type="number" className="form-control" value={pendingAmount} disabled />
         </div>
