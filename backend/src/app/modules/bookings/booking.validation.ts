@@ -45,7 +45,7 @@ export const BasicBookingValidation = z.object({
   advance: z.number().min(0, "Advance cannot be negative").default(0),
   paymentMethod: z.string("Payment Method is required").min(1),
   status: z
-    .enum(["Confirmed", "Pencil", "Cancelled", "Gst", "NoGst"])
+    .enum(["Confirmed", "Pencil", "Cancelled", "NB"])
     .default("Confirmed"),
 });
 

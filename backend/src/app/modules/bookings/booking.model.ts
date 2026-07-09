@@ -59,7 +59,7 @@ const BookingSchema = new Schema<IBooking>(
     },
     status: {
       type: String,
-      enum: ["Confirmed", "Pencil", "Cancelled", "Gst", "NoGst"],
+      enum: ["Confirmed", "Pencil", "Cancelled", "NB"],
       default: "Confirmed",
     },
     Muhurat: {

@@ -771,8 +771,8 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
                           onChange={(e) => setBasicForm((p) => ({ ...p, status: e.target.value as any }))}>
                           <option value="Confirmed">✅ Confirmed</option>
                           <option value="Pencil">✏️ Pencil</option>
-                          <option value="Gst">🧾 Confirmed with GST</option>
-                          <option value="NoGst">🚫🧾 Confirmed without GST (No Bill)</option>
+                          <option value="NB">🧾 NB</option>
+
                           {isEditable && <option value="Cancelled">❌ Cancel</option>}
                         </select>
                       </Col>
