@@ -37,6 +37,7 @@ export const BasicBookingValidation = z.object({
     .string("Booking Date is required")
     .or(z.date())
     .transform((val) => new Date(val)),
+  functionDate: z.coerce.date(),
   functionType: objectId("Function Type"),
   hall: objectId("Hall"),
   startTime: timeToMinutes,

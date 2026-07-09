@@ -15,6 +15,11 @@ export interface IEnquiry {
   mobileNo: string
   alternateMobileNo: string
   email: string
+  date1?: string
+  date2?: string
+  date3?: string
+  guestCount?: number
+  notes?: string
   status: string
   isDeleted: boolean
   createdAt: string
@@ -34,6 +39,12 @@ interface ICreateEnquiry {
   alternateMobileNo?: string
   email?: string
   functionName: string
+  date1?: string
+  date2?: string
+  date3?: string
+  guestCount?: number
+  notes?: string
+  status?: string
 }
 
 interface ISearchEnquiry {

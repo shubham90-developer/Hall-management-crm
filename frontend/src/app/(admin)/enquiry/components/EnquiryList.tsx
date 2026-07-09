@@ -23,6 +23,20 @@ const data = [
   },
 ]
 
+// maps status -> badge className, falls back to a neutral badge for old/blank data
+const getStatusBadgeClass = (status?: string) => {
+  switch (status) {
+    case 'Confirmed':
+      return 'badge-soft-success'
+    case 'Hold':
+      return 'badge-soft-danger'
+    case 'Pending':
+      return 'badge-soft-warning'
+    default:
+      return 'badge-soft-secondary'
+  }
+}
+
 const EnquiryList = () => {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
@@ -72,6 +86,16 @@ const EnquiryList = () => {
       hour12: true,
     })
   }
+
+  // Simple event dates (date1/date2/date3) don't have a time component like createdAt,
+  // so they're formatted separately and safely fall back when missing
+  const formatSimpleDate = (dateStr?: string) => {
+    if (!dateStr) return null
+    const d = new Date(dateStr)
+    if (isNaN(d.getTime())) return null
+    return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+  }
+
   const handleDelete = async (id: string) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
@@ -163,8 +187,13 @@ const EnquiryList = () => {
                                 {/* Left Side */}
                                 <div className="flex-grow-1">
                                   <h5 className="fw-bold mb-2 text-break">{item.customerName}</h5>
-                                  <div className="d-inline-flex align-items-center badge badge-soft-success px-2 py-1 mb-2">
-                                    <IconifyIcon icon="solar:confetti-minimalistic-bold" className="me-1" /> {item.functionName?.functionName}
+                                  <div className="d-flex flex-wrap gap-1 mb-2">
+                                    <div className="d-inline-flex align-items-center badge badge-soft-success px-2 py-1">
+                                      <IconifyIcon icon="solar:confetti-minimalistic-bold" className="me-1" /> {item.functionName?.functionName}
+                                    </div>
+                                    <div className={`d-inline-flex align-items-center badge ${getStatusBadgeClass(item.status)} px-2 py-1`}>
+                                      {item.status || 'Pending'}
+                                    </div>
                                   </div>
                                   <p className="text-muted small mb-0">
                                     📅
@@ -181,6 +210,22 @@ const EnquiryList = () => {
                               </div>
                             </div>
                           </div>
+                          {/* Event dates & guest count */}
+                          {(item.date1 || item.date2 || item.date3 || item.guestCount) && (
+                            <div className="mt-2 small text-muted">
+                              {[item.date1, item.date2, item.date3]
+                                .map((d) => formatSimpleDate(d))
+                                .filter(Boolean)
+                                .join(' · ')}
+                              {item.guestCount ? (
+                                <span className="ms-2">
+                                  <IconifyIcon icon="solar:users-group-rounded-bold-duotone" className="me-1" />
+                                  {item.guestCount} guests
+                                </span>
+                              ) : null}
+                            </div>
+                          )}
+                          {item.notes && <p className="text-muted small mt-1 mb-0 text-truncate">📝 {item.notes}</p>}
                           {/* Footer */}
                           <div className="d-flex mt-3 justify-content-between gap-2">
                             <div className="d-flex align-items-center fw-bold text-dark">

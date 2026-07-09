@@ -6,24 +6,31 @@ import { toast } from 'react-toastify'
 import { useGetAllFunctionsQuery } from '@/store/functionType'
 import { useCreateEnquiryMutation } from '@/store/enquiryApi'
 
+const initialFormState = {
+  functionName: '',
+  customerName: '',
+  mobileNo: '',
+  alternateMobileNo: '',
+  email: '',
+  date1: '',
+  date2: '',
+  date3: '',
+  guestCount: '',
+  notes: '',
+  status: 'Pending',
+}
+
 const AddEnquiryDrawer = ({ onAdd }: any) => {
   const [open, setOpen] = useState(false)
 
-  const [formData, setFormData] = useState({
-    functionName: '',
-    customerName: '',
-    mobileNo: '',
-    alternateMobileNo: '',
-    email: '',
-    status: 'Active',
-  })
+  const [formData, setFormData] = useState(initialFormState)
 
   // api
   const { data: functionData } = useGetAllFunctionsQuery()
   const [createEnquiry, { isLoading }] = useCreateEnquiryMutation()
 
   //  handle
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => {
       return {
@@ -36,17 +43,18 @@ const AddEnquiryDrawer = ({ onAdd }: any) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      await createEnquiry(formData as any).unwrap()
+      const payload = {
+        ...formData,
+        guestCount: formData.guestCount ? Number(formData.guestCount) : undefined,
+        date1: formData.date1 || undefined,
+        date2: formData.date2 || undefined,
+        date3: formData.date3 || undefined,
+      }
+
+      await createEnquiry(payload as any).unwrap()
       toast.success('Enquiry added successfully')
       setOpen(false)
-      setFormData({
-        functionName: '',
-        customerName: '',
-        mobileNo: '',
-        alternateMobileNo: '',
-        email: '',
-        status: 'Active',
-      })
+      setFormData(initialFormState)
     } catch (error) {
       toast.error('Something went wrong')
     }
@@ -81,6 +89,7 @@ const AddEnquiryDrawer = ({ onAdd }: any) => {
           zIndex: 1050,
           transform: open ? 'translateX(0)' : 'translateX(100%)',
           transition: '0.3s ease',
+          overflowY: 'auto',
         }}>
         {/* HEADER */}
         <div className="p-3 border-bottom bg-light d-flex justify-content-between align-items-center">
@@ -128,6 +137,52 @@ const AddEnquiryDrawer = ({ onAdd }: any) => {
             <label className="form-label">Email</label>
 
             <input type="email" className="form-control" placeholder="" name="email" value={formData.email} onChange={handleChange} />
+          </div>
+
+          {/* dates    */}
+          <div className="mb-3">
+            <label className="form-label">Date 1</label>
+            <input type="date" className="form-control" name="date1" value={formData.date1} onChange={handleChange} />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">Date 2</label>
+            <input type="date" className="form-control" name="date2" value={formData.date2} onChange={handleChange} />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">Date 3</label>
+            <input type="date" className="form-control" name="date3" value={formData.date3} onChange={handleChange} />
+          </div>
+
+          {/* guest count    */}
+          <div className="mb-3">
+            <label className="form-label">Approximate Guest Count</label>
+            <input
+              type="number"
+              min={0}
+              className="form-control"
+              placeholder=""
+              name="guestCount"
+              value={formData.guestCount}
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* notes    */}
+          <div className="mb-3">
+            <label className="form-label">Additional Notes</label>
+            <textarea className="form-control" rows={3} name="notes" value={formData.notes} onChange={handleChange} />
+          </div>
+
+          {/* status    */}
+          <div className="mb-3">
+            <label className="form-label">Status</label>
+            <select className="form-select" name="status" value={formData.status} onChange={handleChange}>
+              <option value="Pending">Pending</option>
+              <option value="Confirmed">Confirmed</option>
+              <option value="Hold">Hold</option>
+            </select>
           </div>
 
           {/* function    */}

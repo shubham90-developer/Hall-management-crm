@@ -13,8 +13,19 @@ export const createEnquiry = async (
   next: NextFunction,
 ) => {
   try {
-    const { customerName, mobileNo, alternateMobileNo, email, functionName } =
-      req.body;
+    const {
+      customerName,
+      mobileNo,
+      alternateMobileNo,
+      email,
+      functionName,
+      date1,
+      date2,
+      date3,
+      guestCount,
+      notes,
+      status,
+    } = req.body;
 
     // exixting
     const existingEnquiry = await Enquiry.findOne({
@@ -38,6 +49,12 @@ export const createEnquiry = async (
       alternateMobileNo,
       email,
       functionName,
+      date1,
+      date2,
+      date3,
+      guestCount,
+      notes,
+      status,
     });
 
     // create

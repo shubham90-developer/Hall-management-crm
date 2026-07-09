@@ -6,6 +6,12 @@ export const enquirySchema = z.object({
   alternateMobileNo: z.string().optional(),
   email: z.string().optional(),
   functionName: z.string().optional(),
+  date1: z.coerce.date().optional(),
+  date2: z.coerce.date().optional(),
+  date3: z.coerce.date().optional(),
+  guestCount: z.coerce.number().optional(),
+  notes: z.string().optional(),
+  status: z.enum(["Pending", "Confirmed", "Hold"]).optional(),
 });
 
 export const enquiryUpdateValidation = z.object({
@@ -17,4 +23,10 @@ export const enquiryUpdateValidation = z.object({
   alternateMobileNo: z.string().optional(),
   email: z.string().optional(),
   functionName: z.string().optional(),
+  date1: z.coerce.date().optional(),
+  date2: z.coerce.date().optional(),
+  date3: z.coerce.date().optional(),
+  guestCount: z.coerce.number().optional(),
+  notes: z.string().optional(),
+  status: z.enum(["Pending", "Confirmed", "Hold"]).optional(),
 });

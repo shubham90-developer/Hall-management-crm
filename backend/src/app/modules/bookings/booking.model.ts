@@ -27,6 +27,10 @@ const BookingSchema = new Schema<IBooking>(
       type: Date,
       required: true,
     },
+    functionDate: {
+      type: Date,
+      required: true,
+    },
     functionType: {
       type: Schema.Types.ObjectId,
       ref: "FunctionType",

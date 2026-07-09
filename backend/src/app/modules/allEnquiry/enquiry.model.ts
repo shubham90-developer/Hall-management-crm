@@ -19,6 +19,26 @@ const EnquirySchema: Schema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "FunctionType",
     },
+    date1: {
+      type: Date,
+    },
+    date2: {
+      type: Date,
+    },
+    date3: {
+      type: Date,
+    },
+    guestCount: {
+      type: Number,
+    },
+    notes: {
+      type: String,
+    },
+    status: {
+      type: String,
+      enum: ["Pending", "Confirmed", "Hold"],
+      default: "Pending",
+    },
     isDeleted: {
       type: Boolean,
       default: false,

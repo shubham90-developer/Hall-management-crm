@@ -6,6 +6,7 @@ export interface IBooking extends Document {
   address: String;
   gstNo: String;
   bookingDate: Date;
+  functionDate: Date;
   functionType: Types.ObjectId;
   hall: Types.ObjectId;
   startTime: Number;
@@ -30,7 +31,6 @@ export interface IBooking extends Document {
   specialMenuAmount: Number;
   subtotalamount: Number;
   gst: Number;
-
   mealTime: string | null;
   grandTotal: Number;
   discount: Number;
