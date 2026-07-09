@@ -262,6 +262,7 @@ export const updateBooking = async (
 
       const advance = Number(existingBooking.advance || 0);
 
+      // Menu pricing — completely unchanged
       const { subtotalamount, grandTotal, finalAmount, pendingAmount } =
         calculatePricing(
           totalAmount,
@@ -273,12 +274,25 @@ export const updateBooking = async (
           advance,
         );
 
+      // Hall pricing — separate track, independent of menu totals above
+      const isNB = existingBooking.status === "NB";
+      const hallAmount = Number(
+        parsedPricing.hallAmount ?? existingBooking.hallAmount ?? 0,
+      );
+      const cgst = isNB ? 0 : Number(parsedPricing.cgst ?? 0);
+      const sgst = isNB ? 0 : Number(parsedPricing.sgst ?? 0);
+      const hallFinalAmount = hallAmount + cgst + sgst;
+
       validateData = {
         ...parsedPricing,
         subtotalamount,
         grandTotal,
         finalAmount,
         pendingAmount,
+        hallAmount,
+        cgst,
+        sgst,
+        hallFinalAmount,
       };
     } else {
       next(new appError("Invalid step. Use: basic | menu | pricing", 400));

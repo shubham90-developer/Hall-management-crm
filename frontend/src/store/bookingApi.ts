@@ -34,7 +34,8 @@ export interface IBooking {
   endTime: string
   advance: number
   paymentMethod: string
-  status: 'Confirmed' | 'Pencil' | 'Cancelled'
+  status: 'Confirmed' | 'Pencil' | 'Cancelled' | 'NB'
+
   Muhurat?: string
   guests?: number
   seatingArrangement?: string
@@ -59,6 +60,10 @@ export interface IBooking {
   discount?: number
   finalAmount?: number
   pendingAmount?: number
+  hallAmount?: number
+  cgst?: number
+  sgst?: number
+  hallFinalAmount?: number
   createdAt: string
   updatedAt: string
 }
@@ -82,7 +87,7 @@ interface ICreateBooking {
   endTime: string
   advance: number
   paymentMethod: string
-  status: 'Confirmed' | 'Pencil' | 'Cancelled'
+  status: 'Confirmed' | 'Pencil' | 'Cancelled' | 'NB'
 }
 
 interface IUpdateMenuBooking {
@@ -111,6 +116,9 @@ interface IUpdatePricingBooking {
   grandTotal?: number
   finalAmount?: number
   pendingAmount?: number
+  hallAmount?: number
+  cgst?: number
+  sgst?: number
 }
 
 export const bookingApi = createApi({

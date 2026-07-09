@@ -25,6 +25,8 @@ import AmountDetails from '@/app/(admin)/menu-selction/components/AmountDetails'
 import MenuSelectionDetails from '@/app/(admin)/menu-selction/details/components/MenuSelectionDetails'
 import { useGetAllBuggetNameQuery } from '@/store/buffetNameApi'
 import { useGetAllExternalItemsQuery } from '@/store/externalItemsApi'
+import PricingModal from './PricingModal'
+import { IBooking } from '@/store/bookingApi'
 type TabType = 'booking' | 'menu' | 'view' | 'pricing'
 
 interface Props {
@@ -53,6 +55,8 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
   const [isAdvance, setIsAdvance] = useState(false)
 
   const [mainModalVisible, setMainModalVisible] = useState(true)
+  const [showHallPricingModal, setShowHallPricingModal] = useState(false)
+  const [createdBooking, setCreatedBooking] = useState<IBooking | null>(null)
   const totalSteps = 8
   const isSpecialMenuTab = selectedMenu === 'starters' || selectedMenu === 'chatmenu'
   const [enquiryDates, setEnquiryDates] = useState<{ date1?: string; date2?: string; date3?: string }>({})
@@ -72,7 +76,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
     endTime: '',
     advance: 0,
     paymentMethod: '--',
-    status: 'Confirmed' as 'Confirmed' | 'Pencil' | 'Cancelled',
+    status: 'Confirmed' as 'Confirmed' | 'Pencil' | 'Cancelled' | 'NB',
   })
 
   // ── Step 2 State ────────────────────────────────────────────────
@@ -360,8 +364,13 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
       }).unwrap()
 
       setBookingId(result._id)
+      setCreatedBooking(result)
       toast.success('Booking saved!')
       setMainModalVisible(false)
+
+      if (result.status !== 'Pencil') {
+        setShowHallPricingModal(true)
+      }
     } catch (error: any) {
       toast.error(error?.data?.message || 'Something went wrong')
     }
@@ -371,7 +380,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
   const handleUpdateBooking = async () => {
     try {
       if (!bookingId) return
-      await updateBasic({
+      const result = await updateBasic({
         id: bookingId,
         data: {
           address: basicForm.address,
@@ -385,8 +394,14 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
           status: basicForm.status,
         },
       }).unwrap()
+
+      setCreatedBooking(result)
       toast.success('Booking updated!')
       toggle()
+
+      if (result.status !== 'Pencil') {
+        setShowHallPricingModal(true)
+      }
     } catch (error: any) {
       toast.error(error?.data?.message || 'Something went wrong')
     }
@@ -655,11 +670,17 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
 
                       <Col md={3}>
                         <label className="form-label">🎉 Function Type</label>
-                        <input
-                          className="form-control"
-                          value={functionTypes.find((f) => f._id === basicForm.functionType)?.functionName || ''}
-                          disabled
-                        />
+                        <select
+                          className="form-select"
+                          value={basicForm.functionType}
+                          onChange={(e) => setBasicForm((p) => ({ ...p, functionType: e.target.value }))}>
+                          <option value="">Select Function Type</option>
+                          {functionTypes.map((f) => (
+                            <option key={f._id} value={f._id}>
+                              {f.functionName}
+                            </option>
+                          ))}
+                        </select>
                       </Col>
                       <Col md={isEditable ? 4 : 3}>
                         <label className="form-label">📅 Function Date</label>
@@ -1149,6 +1170,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
           )}
         </ModalBody>
       </Modal>
+      {createdBooking && <PricingModal show={showHallPricingModal} onHide={() => setShowHallPricingModal(false)} booking={createdBooking} />}
 
       <style>{`
         .booking-tab-card {

@@ -1,12 +1,13 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { Col, Row } from 'react-bootstrap'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useGetBookingByIdQuery, useDeleteBookingMutation } from '@/store/bookingApi'
-import { useRouter } from 'next/navigation'
 import Swal from 'sweetalert2'
+import PricingModal from '@/app/(admin)/apps/calendar/components/PricingModal'
+
 const minutesToTime = (minutes: number): string => {
   const h = Math.floor(minutes / 60)
   const m = minutes % 60
@@ -21,6 +22,13 @@ const BookingsDetails = () => {
 
   const { data: booking, isLoading } = useGetBookingByIdQuery(id as string, { skip: !id })
   const [deleteBooking] = useDeleteBookingMutation()
+
+  const [showPricingModal, setShowPricingModal] = useState(false)
+
+  const handlePricingClick = () => {
+    if (!booking || booking.status === 'Pencil') return
+    setShowPricingModal(true)
+  }
 
   const handleDelete = async () => {
     const result = await Swal.fire({
@@ -153,6 +161,12 @@ const BookingsDetails = () => {
                   📄 Download Quotation
                 </Link>
 
+                {booking.status !== 'Pencil' && (
+                  <button className="btn btn-success" onClick={handlePricingClick}>
+                    💰 Add Pricing
+                  </button>
+                )}
+
                 {/* <button className="btn btn-success">💬 Send WhatsApp</button> */}
 
                 <button className="btn btn-danger" onClick={handleDelete}>
@@ -198,6 +212,8 @@ const BookingsDetails = () => {
           </div>
         </Col>
       </Row>
+
+      <PricingModal show={showPricingModal} onHide={() => setShowPricingModal(false)} booking={booking} />
     </div>
   )
 }

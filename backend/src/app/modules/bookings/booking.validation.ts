@@ -86,6 +86,11 @@ export const PricingBookingValidation = z.object({
   discount: z.number().min(0).default(0),
   finalAmount: z.number().min(0).default(0),
   pendingAmount: z.number().min(0).default(0),
+
+  hallAmount: z.number().min(0).default(0),
+  cgst: z.number().min(0).default(0),
+  sgst: z.number().min(0).default(0),
+  hallFinalAmount: z.number().min(0).default(0),
 });
 
 // ── Full Validation (all steps combined) ──────────────────────────────────────

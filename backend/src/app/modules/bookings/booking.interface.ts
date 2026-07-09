@@ -36,4 +36,8 @@ export interface IBooking extends Document {
   discount: Number;
   finalAmount: Number;
   pendingAmount: Number;
+  hallAmount: Number;
+  cgst: Number;
+  sgst: Number;
+  hallFinalAmount: Number;
 }
