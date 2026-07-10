@@ -480,30 +480,116 @@ export const getDayRequirements = async (
       ],
     });
 
-    const grosaryMap: Record<string, { name: string; qty: number }> = {};
-    const crockeryMap: Record<string, { name: string; qty: number }> = {};
-    const vegMap: Record<string, { name: string; qty: number }> = {};
+    const grosaryMap: Record<
+      string,
+      { name: string; qty: number; unit: string }
+    > = {};
+    const crockeryMap: Record<
+      string,
+      { name: string; qty: number; unit: string }
+    > = {};
+    const vegMap: Record<string, { name: string; qty: number; unit: string }> =
+      {};
 
-    const addToMap = (map: any, name: string, qtyStr: string) => {
+    // "50kg" -> 50, "200pcs" -> 200, "" -> 0
+    const parseQtyNumber = (val: string) => {
+      const match = String(val ?? "").match(/[\d.]+/);
+      return match ? parseFloat(match[0]) : 0;
+    };
+
+    // "50kg" -> "kg", "200 pcs" -> "pcs"
+    const parseUnit = (val: string) => {
+      const match = String(val ?? "").match(/[a-zA-Z]+/);
+      return match ? match[0] : "";
+    };
+
+    // Maps every unit variant to one canonical "base unit" per measurement family,
+    // so quantities in different units (kg vs g, l vs ml) can be summed correctly.
+    const UNIT_CONVERSIONS: Record<string, { base: string; factor: number }> = {
+      kg: { base: "g", factor: 1000 },
+      g: { base: "g", factor: 1 },
+      l: { base: "ml", factor: 1000 },
+      ml: { base: "ml", factor: 1 },
+      pcs: { base: "pcs", factor: 1 },
+    };
+
+    // Converts a parsed qty+unit pair into its base-unit equivalent.
+    // Unknown units (not in the table) are passed through unchanged as a safe fallback.
+    const toBaseUnit = (qty: number, unit: string) => {
+      const conv = UNIT_CONVERSIONS[unit.toLowerCase()];
+      if (!conv) return { baseQty: qty, baseUnit: unit };
+      return { baseQty: qty * conv.factor, baseUnit: conv.base };
+    };
+
+    // Guest-scaled add: same formula as the per-booking requirement sheets —
+    // rate = (item qty ÷ menu item's base guest count), required = rate × actual guests.
+    // Result is then normalized into a base unit before being summed into the map,
+    // so mixed units (e.g. "20kg" and "500g") for the same item combine correctly.
+    const addToMap = (
+      map: any,
+      name: string,
+      qtyStr: string,
+      menuBaseGuests: number,
+      guests: number,
+    ) => {
       if (!name) return;
-      const qtyNum = parseFloat(qtyStr) || 0;
-      if (!map[name]) map[name] = { name, qty: 0 };
-      map[name].qty += qtyNum;
+      const entryQty = parseQtyNumber(qtyStr);
+      const unit = parseUnit(qtyStr);
+      const rate = menuBaseGuests > 0 ? entryQty / menuBaseGuests : 0;
+      const required = Number((rate * guests).toFixed(2));
+
+      const { baseQty: normQty, baseUnit } = toBaseUnit(required, unit);
+      const key = `${name}__${baseUnit}`;
+
+      if (!map[key]) map[key] = { name, qty: 0, unit: baseUnit };
+      map[key].qty += normQty;
     };
 
     for (const booking of bookings as any[]) {
+      const guests = Number(booking.guests) || 0;
+
       for (const menuItem of booking.menu || []) {
+        const baseQty = Number(menuItem.qty) || 0;
+
         (menuItem.crocekryName || []).forEach((c: any) =>
-          addToMap(crockeryMap, c.item?.crocekryName, c.qty),
+          addToMap(crockeryMap, c.item?.crocekryName, c.qty, baseQty, guests),
         );
         (menuItem.grosaryName || []).forEach((g: any) =>
-          addToMap(grosaryMap, g.item?.grosaryName, g.qty),
+          addToMap(grosaryMap, g.item?.grosaryName, g.qty, baseQty, guests),
         );
         (menuItem.vegitablesName || []).forEach((v: any) =>
-          addToMap(vegMap, v.item?.vegitablesName, v.qty),
+          addToMap(vegMap, v.item?.vegitablesName, v.qty, baseQty, guests),
         );
       }
     }
+
+    // Converts large base-unit values back into a friendlier display unit
+    // e.g. 5000g -> 5kg, 2500ml -> 2.5l. Leaves pcs and anything else as-is.
+    const formatForDisplay = (item: {
+      name: string;
+      qty: number;
+      unit: string;
+    }) => {
+      if (item.unit === "g" && item.qty >= 1000) {
+        return {
+          name: item.name,
+          qty: Number((item.qty / 1000).toFixed(2)),
+          unit: "kg",
+        };
+      }
+      if (item.unit === "ml" && item.qty >= 1000) {
+        return {
+          name: item.name,
+          qty: Number((item.qty / 1000).toFixed(2)),
+          unit: "l",
+        };
+      }
+      return {
+        name: item.name,
+        qty: Number(item.qty.toFixed(2)),
+        unit: item.unit,
+      };
+    };
 
     res.json({
       success: true,
@@ -512,15 +598,15 @@ export const getDayRequirements = async (
       data: {
         functionDate: start,
         bookingsCount: bookings.length,
-        crockery: Object.values(crockeryMap).sort((a, b) =>
-          a.name.localeCompare(b.name),
-        ),
-        grocery: Object.values(grosaryMap).sort((a, b) =>
-          a.name.localeCompare(b.name),
-        ),
-        vegetables: Object.values(vegMap).sort((a, b) =>
-          a.name.localeCompare(b.name),
-        ),
+        crockery: Object.values(crockeryMap)
+          .map(formatForDisplay)
+          .sort((a, b) => a.name.localeCompare(b.name)),
+        grocery: Object.values(grosaryMap)
+          .map(formatForDisplay)
+          .sort((a, b) => a.name.localeCompare(b.name)),
+        vegetables: Object.values(vegMap)
+          .map(formatForDisplay)
+          .sort((a, b) => a.name.localeCompare(b.name)),
       },
     });
   } catch (error) {

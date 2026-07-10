@@ -24,6 +24,7 @@ export const createEnquiry = async (
       date3,
       guestCount,
       notes,
+      isJain,
       status,
     } = req.body;
 
@@ -54,6 +55,7 @@ export const createEnquiry = async (
       date3,
       guestCount,
       notes,
+      isJain,
       status,
     });
 

@@ -12,6 +12,7 @@ export interface IEnquiry extends Document {
   guestCount: number;
   notes?: string;
   status: "Pending" | "Confirmed" | "Hold";
+  isJain: boolean;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;

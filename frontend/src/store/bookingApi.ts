@@ -71,6 +71,7 @@ export interface IBooking {
 export interface IDayRequirementItem {
   name: string
   qty: number
+  unit: string
 }
 
 export interface IDayRequirements {

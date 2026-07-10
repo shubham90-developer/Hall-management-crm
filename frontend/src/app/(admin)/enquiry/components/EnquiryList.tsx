@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card, CardBody, CardFooter, CardTitle, Col, Row } from 'react-bootstrap'
+import { Card, CardBody, CardFooter, CardTitle, Col, Row, Modal, Button } from 'react-bootstrap'
 
 import IconifyIcon from '@/components/wrappers/IconifyIcon'
 
@@ -40,6 +40,8 @@ const getStatusBadgeClass = (status?: string) => {
 const EnquiryList = () => {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
+  const [showModal, setShowModal] = useState(false)
+  const [selectedEnquiry, setSelectedEnquiry] = useState<IEnquiry | null>(null)
   const itemPerPage = 10
 
   const { data: enquiryData, isLoading, isError } = useGetAllEnquiryQuery()
@@ -94,6 +96,11 @@ const EnquiryList = () => {
     const d = new Date(dateStr)
     if (isNaN(d.getTime())) return null
     return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+  }
+
+  const handleView = (item: IEnquiry) => {
+    setSelectedEnquiry(item)
+    setShowModal(true)
   }
 
   const handleDelete = async (id: string) => {
@@ -239,6 +246,9 @@ const EnquiryList = () => {
                           </div>
                           {/* Divider */} <div className="border-top my-2"></div>
                           <div className="d-flex justify-content-end gap-2 flex-shrink-0">
+                            <button className="btn btn-soft-info btn-sm" onClick={() => handleView(item)}>
+                              <IconifyIcon icon="solar:eye-broken" />
+                            </button>
                             <EditEnquiryDrawer item={item} />
                             <button className="btn btn-soft-danger btn-sm" onClick={() => handleDelete(item._id)}>
                               <IconifyIcon icon="solar:trash-bin-minimalistic-2-broken" className="fs-16" />
@@ -293,6 +303,77 @@ const EnquiryList = () => {
           </CardFooter>
         </Card>
       </Col>
+
+      {/* View Enquiry Modal */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Enquiry Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedEnquiry ? (
+            <Row className="g-3">
+              <Col md={6}>
+                <p className="text-muted small mb-1">Customer Name</p>
+                <p className="fw-bold">{selectedEnquiry.customerName}</p>
+              </Col>
+              <Col md={6}>
+                <p className="text-muted small mb-1">Status</p>
+                <span className={`badge ${getStatusBadgeClass(selectedEnquiry.status)} px-2 py-1`}>{selectedEnquiry.status || 'Pending'}</span>
+              </Col>
+              <Col md={6}>
+                <p className="text-muted small mb-1">Mobile</p>
+                <p className="fw-bold">{selectedEnquiry.mobileNo}</p>
+              </Col>
+              <Col md={6}>
+                <p className="text-muted small mb-1">Alternate Mobile</p>
+                <p className="fw-bold">{selectedEnquiry.alternateMobileNo}</p>
+              </Col>
+              <Col md={6}>
+                <p className="text-muted small mb-1">Email</p>
+                <p className="fw-bold text-break">{selectedEnquiry.email}</p>
+              </Col>
+              <Col md={6}>
+                <p className="text-muted small mb-1">Function</p>
+                <p className="fw-bold">{selectedEnquiry.functionName?.functionName}</p>
+              </Col>
+              <Col md={6}>
+                <p className="text-muted small mb-1">Enquiry Date</p>
+                <p className="fw-bold">{formatEnquiryDate(selectedEnquiry.createdAt)}</p>
+              </Col>
+              {selectedEnquiry.guestCount ? (
+                <Col md={6}>
+                  <p className="text-muted small mb-1">Guest Count</p>
+                  <p className="fw-bold">{selectedEnquiry.guestCount}</p>
+                </Col>
+              ) : null}
+              {(selectedEnquiry.date1 || selectedEnquiry.date2 || selectedEnquiry.date3) && (
+                <Col md={12}>
+                  <p className="text-muted small mb-1">Function Dates</p>
+                  <p className="fw-bold">
+                    {[selectedEnquiry.date1, selectedEnquiry.date2, selectedEnquiry.date3]
+                      .map((d) => formatSimpleDate(d))
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </p>
+                </Col>
+              )}
+              {selectedEnquiry.notes && (
+                <Col md={12}>
+                  <p className="text-muted small mb-1">Notes</p>
+                  <p className="fw-bold">{selectedEnquiry.notes}</p>
+                </Col>
+              )}
+            </Row>
+          ) : (
+            <p className="text-muted mb-0">No enquiry selected.</p>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Row>
   )
 }

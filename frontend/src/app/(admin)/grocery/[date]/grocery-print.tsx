@@ -134,7 +134,9 @@ const GroceryPrint = () => {
                     <tr key={item.name}>
                       <td style={tdStyle}>{index + 1}</td>
                       <td style={tdStyle}>{item.name}</td>
-                      <td style={{ ...tdStyle, fontWeight: 700 }}>{item.qty}</td>
+                      <td style={{ ...tdStyle, fontWeight: 700 }}>
+                        {item.qty} {item.unit}
+                      </td>
                     </tr>
                   ))
                 )}

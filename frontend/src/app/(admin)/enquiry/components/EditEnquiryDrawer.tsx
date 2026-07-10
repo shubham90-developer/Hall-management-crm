@@ -17,6 +17,7 @@ const initialFormState = {
   date3: '',
   guestCount: '',
   notes: '',
+  isJain: false,
   status: 'Pending',
 }
 
@@ -51,6 +52,7 @@ const EditEnquiryDrawer = ({ item }: any) => {
         date3: toDateInputValue(enquiryData.date3),
         guestCount: enquiryData.guestCount != null ? String(enquiryData.guestCount) : '',
         notes: enquiryData.notes || '',
+        isJain: enquiryData.isJain || false,
         status: enquiryData.status || 'Pending',
       })
     }
@@ -183,7 +185,24 @@ const EditEnquiryDrawer = ({ item }: any) => {
             <label className="form-label">Date 3</label>
             <input type="date" className="form-control" name="date3" value={formData.date3} onChange={handleChange} />
           </div>
+          {/* isJain */}
+          <div className="mb-3">
+            <label className="form-label">Jain Food Required</label>
 
+            <select
+              className="form-select"
+              name="isJain"
+              value={String(formData.isJain)}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  isJain: e.target.value === 'true',
+                }))
+              }>
+              <option value="false">No</option>
+              <option value="true">Yes</option>
+            </select>
+          </div>
           {/* guest count    */}
           <div className="mb-3">
             <label className="form-label">Approximate Guest Count</label>

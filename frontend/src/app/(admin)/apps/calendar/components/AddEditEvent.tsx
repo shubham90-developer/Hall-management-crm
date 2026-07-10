@@ -27,7 +27,10 @@ import { useGetAllBuggetNameQuery } from '@/store/buffetNameApi'
 import { useGetAllExternalItemsQuery } from '@/store/externalItemsApi'
 import PricingModal from './PricingModal'
 import { IBooking } from '@/store/bookingApi'
-type TabType = 'booking' | 'menu' | 'view' | 'pricing'
+import { useRouter } from 'next/navigation'
+import { useCreateInvoiceMutation } from '@/store/invoiceApi'
+import InvoiceAmountDetails from '@/app/(admin)/invoice/amountDetails'
+type TabType = 'booking' | 'menu' | 'view' | 'pricing' | 'invoice'
 
 interface Props {
   open: boolean
@@ -60,7 +63,23 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
   const totalSteps = 8
   const isSpecialMenuTab = selectedMenu === 'starters' || selectedMenu === 'chatmenu'
   const [enquiryDates, setEnquiryDates] = useState<{ date1?: string; date2?: string; date3?: string }>({})
-  // ── Step 1 State ────────────────────────────────────────────────
+  const router = useRouter()
+  const [createInvoice, { isLoading: savingInvoice }] = useCreateInvoiceMutation()
+
+  // ── Invoice tab state (independent from booking's own guests/advance) ──
+  const [invoiceGuests, setInvoiceGuests] = useState(0)
+  const [invoiceAdvance, setInvoiceAdvance] = useState(0)
+  const [invoiceDiscount, setInvoiceDiscount] = useState(0)
+  const [invoiceCalculated, setInvoiceCalculated] = useState({
+    totalAmount: 0,
+    additionalAmount: 0,
+    subtotalamount: 0,
+    gst: 0,
+    grandTotal: 0,
+    finalAmount: 0,
+    pendingAmount: 0,
+  })
+
   const [basicForm, setBasicForm] = useState({
     enquiryId: '',
     customerName: '',
@@ -225,6 +244,9 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
       })
       setSelectedStarters(sanitizeIds(existingBooking.starters || []))
       setSelectedChatMenu(sanitizeIds(existingBooking.chatMenu || []))
+
+      setInvoiceGuests(existingBooking.guests || 0)
+      setInvoiceAdvance(existingBooking.advance || 0)
 
       setActiveTab(null)
     }
@@ -505,11 +527,42 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
     }
   }
 
+  const handleCreateInvoice = async () => {
+    const bookingRefId = bookingId || selectedBookingId
+    if (!bookingRefId) {
+      toast.error('Booking not found')
+      return
+    }
+    if (invoiceGuests <= 0) {
+      toast.error('Please enter number of guests')
+      return
+    }
+    try {
+      const result = await createInvoice({
+        booking: bookingRefId,
+        guests: invoiceGuests,
+        baseGuests: existingBooking?.guests || invoiceGuests,
+        totalAmount: invoiceCalculated.totalAmount,
+        additionalAmount: invoiceCalculated.additionalAmount,
+        gst: invoiceCalculated.gst,
+        discount: invoiceDiscount,
+        advance: invoiceAdvance,
+      }).unwrap()
+
+      toast.success('Invoice created successfully')
+      toggle() // closes the booking modal
+      router.push(`/invoices/invoices-details/${result._id}`)
+    } catch (error: any) {
+      toast.error(error?.data?.message || 'Failed to create invoice')
+    }
+  }
+
   const tabs = [
     { id: 'booking' as TabType, icon: '📅', title: isEditable ? 'Update Booking' : 'Add Booking', desc: 'Customer & Event Details' },
     { id: 'menu' as TabType, icon: '🍽️', title: 'Select Menu', desc: 'Choose Buffet & Items' },
     { id: 'pricing' as TabType, icon: '💰', title: 'Payment Information', desc: 'Review Pricing & Amount' },
     { id: 'view' as TabType, icon: '📋', title: 'View Booking', desc: 'Review Booking Summary' },
+    { id: 'invoice' as TabType, icon: '🧾', title: 'Create Invoice', desc: 'Generate Invoice for this Booking' },
   ]
 
   return (
@@ -1164,6 +1217,47 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
               <div className="card-footer d-flex justify-content-end">
                 <button type="button" className="btn btn-warning" onClick={handleSavePricing} disabled={savingPrice}>
                   {savingPrice ? 'Saving...' : '💰 Save Pricing'}
+                </button>
+              </div>
+            </div>
+          )}
+          {activeTab === 'invoice' && existingBooking && (
+            <div className="card border-0 shadow-sm">
+              <div className="card-header bg-success-subtle">
+                <h5 className="mb-0">🧾 Create Invoice</h5>
+              </div>
+              <div className="card-body">
+                <div className="mb-4 p-3 rounded-3" style={{ background: '#fff7ed' }}>
+                  <Row>
+                    <Col md={4}>
+                      <div className="text-muted small">Customer</div>
+                      <div className="fw-semibold">{existingBooking.enquiry?.customerName}</div>
+                    </Col>
+                    <Col md={4}>
+                      <div className="text-muted small">Booking No.</div>
+                      <div className="fw-semibold">{existingBooking.bookingNo}</div>
+                    </Col>
+                    <Col md={4}>
+                      <div className="text-muted small">Function</div>
+                      <div className="fw-semibold">{existingBooking.functionType?.functionName}</div>
+                    </Col>
+                  </Row>
+                </div>
+
+                <InvoiceAmountDetails
+                  booking={existingBooking}
+                  guests={invoiceGuests}
+                  onGuestsChange={setInvoiceGuests}
+                  advance={invoiceAdvance}
+                  onAdvanceChange={setInvoiceAdvance}
+                  discount={invoiceDiscount}
+                  onDiscountChange={setInvoiceDiscount}
+                  onCalculatedChange={setInvoiceCalculated}
+                />
+              </div>
+              <div className="card-footer d-flex justify-content-end">
+                <button type="button" className="btn btn-success" onClick={handleCreateInvoice} disabled={savingInvoice}>
+                  {savingInvoice ? 'Creating...' : '🧾 Save & View Invoice'}
                 </button>
               </div>
             </div>

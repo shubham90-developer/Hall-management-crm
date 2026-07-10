@@ -6,6 +6,7 @@ export interface IUserDocument extends Document {
   email: string;
   password: string;
   logo: string;
+  secondaryLogo: string;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -21,6 +22,7 @@ const UserSchema = new Schema<IUserDocument>(
     },
     password: { type: String, required: true, select: false },
     logo: { type: String, default: "" },
+    secondaryLogo: { type: String, default: "" },
   },
   { timestamps: true },
 );

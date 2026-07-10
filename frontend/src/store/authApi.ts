@@ -7,6 +7,7 @@ export interface IUser {
   username: string
   email: string
   logo: string
+  secondaryLogo: string
   createdAt: string
   updatedAt: string
 }
@@ -83,7 +84,15 @@ export const authApi = createApi({
       }),
       transformResponse: (response: { data: IUser }) => response.data,
     }),
+    updateSecondaryLogo: builder.mutation<IUser, FormData>({
+      query: (formData) => ({
+        url: '/auth/secondary-logo',
+        method: 'PATCH',
+        body: formData,
+      }),
+      transformResponse: (response: { data: IUser }) => response.data,
+    }),
   }),
 })
 
-export const { useGetMeQuery, useLoginMutation, useChangePasswordMutation, useUpdateLogoMutation } = authApi
+export const { useUpdateSecondaryLogoMutation, useGetMeQuery, useLoginMutation, useChangePasswordMutation, useUpdateLogoMutation } = authApi

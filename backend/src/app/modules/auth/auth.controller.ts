@@ -176,3 +176,33 @@ export const updateLogo = async (
     next(error);
   }
 };
+
+export const updateSecondaryLogo = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    if (!req.file) {
+      next(new appError("Logo image is required", 400));
+      return;
+    }
+    const user = await User.findByIdAndUpdate(
+      (req.user as IUserPayload).id,
+      { secondaryLogo: req.file.path },
+      { new: true },
+    );
+    if (!user) {
+      next(new appError("User not found", 404));
+      return;
+    }
+    res.json({
+      success: true,
+      statusCode: 200,
+      message: "Secondary logo updated successfully",
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

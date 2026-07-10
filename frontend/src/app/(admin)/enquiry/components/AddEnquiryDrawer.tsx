@@ -17,6 +17,7 @@ const initialFormState = {
   date3: '',
   guestCount: '',
   notes: '',
+  isJain: false,
   status: 'Pending',
 }
 
@@ -45,6 +46,7 @@ const AddEnquiryDrawer = ({ onAdd }: any) => {
     try {
       const payload = {
         ...formData,
+
         guestCount: formData.guestCount ? Number(formData.guestCount) : undefined,
         date1: formData.date1 || undefined,
         date2: formData.date2 || undefined,
@@ -153,6 +155,24 @@ const AddEnquiryDrawer = ({ onAdd }: any) => {
           <div className="mb-3">
             <label className="form-label">Date 3</label>
             <input type="date" className="form-control" name="date3" value={formData.date3} onChange={handleChange} />
+          </div>
+
+          {/* isJain */}
+          <div className="mb-3">
+            <label className="form-label">Jain Food Required</label>
+            <select
+              className="form-select"
+              name="isJain"
+              value={String(formData.isJain)}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  isJain: e.target.value === 'true',
+                }))
+              }>
+              <option value="false">No</option>
+              <option value="true">Yes</option>
+            </select>
           </div>
 
           {/* guest count    */}

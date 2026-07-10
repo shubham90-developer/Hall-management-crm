@@ -20,6 +20,7 @@ export interface IEnquiry {
   date3?: string
   guestCount?: number
   notes?: string
+  isJain: boolean
   status: string
   isDeleted: boolean
   createdAt: string
@@ -44,6 +45,7 @@ interface ICreateEnquiry {
   date3?: string
   guestCount?: number
   notes?: string
+  isJain: boolean
   status?: string
 }
 

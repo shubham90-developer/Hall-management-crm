@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { IEnquiry } from "./enquiry.interface";
+import { boolean } from "zod";
 
 const EnquirySchema: Schema = new Schema(
   {
@@ -33,6 +34,9 @@ const EnquirySchema: Schema = new Schema(
     },
     notes: {
       type: String,
+    },
+    isJain: {
+      type: Boolean,
     },
     status: {
       type: String,

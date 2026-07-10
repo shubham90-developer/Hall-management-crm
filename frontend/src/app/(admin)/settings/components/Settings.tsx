@@ -5,7 +5,7 @@ import { Card, CardBody, CardHeader, CardTitle } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useChangePasswordMutation, useUpdateLogoMutation, useGetMeQuery } from '@/store/authApi'
+import { useChangePasswordMutation, useUpdateLogoMutation, useUpdateSecondaryLogoMutation, useGetMeQuery } from '@/store/authApi'
 import { useNotificationContext } from '@/context/useNotificationContext'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
@@ -24,6 +24,7 @@ type ChangePasswordFields = yup.InferType<typeof changePasswordSchema>
 const Settings = () => {
   const [changePassword, { isLoading }] = useChangePasswordMutation()
   const [updateLogo, { isLoading: isLogoUploading }] = useUpdateLogoMutation()
+  const [updateSecondaryLogo, { isLoading: isSecondaryLogoUploading }] = useUpdateSecondaryLogoMutation()
   const { data: currentUser, refetch: refetchMe } = useGetMeQuery()
   const { showNotification } = useNotificationContext()
   const router = useRouter()
@@ -39,11 +40,21 @@ const Settings = () => {
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
 
+  const [secondaryLogoFile, setSecondaryLogoFile] = useState<File | null>(null)
+  const [secondaryLogoPreview, setSecondaryLogoPreview] = useState<string | null>(null)
+
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
     setLogoFile(file)
     setLogoPreview(URL.createObjectURL(file))
+  }
+
+  const handleSecondaryLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setSecondaryLogoFile(file)
+    setSecondaryLogoPreview(URL.createObjectURL(file))
   }
 
   const handleLogoUpload = async () => {
@@ -66,6 +77,26 @@ const Settings = () => {
     }
   }
 
+  const handleSecondaryLogoUpload = async () => {
+    if (!secondaryLogoFile) {
+      showNotification({ message: 'Please select an image first', variant: 'danger' })
+      return
+    }
+
+    try {
+      const formData = new FormData()
+      formData.append('logo', secondaryLogoFile) // backend field name is still 'logo' — see multer config
+
+      await updateSecondaryLogo(formData).unwrap()
+      showNotification({ message: 'Secondary logo updated successfully', variant: 'success' })
+      setSecondaryLogoFile(null)
+      setSecondaryLogoPreview(null)
+      refetchMe()
+    } catch (error: any) {
+      showNotification({ message: error?.data?.message || 'Failed to update secondary logo', variant: 'danger' })
+    }
+  }
+
   const onSubmit = handleSubmit(async (values) => {
     try {
       await changePassword({
@@ -83,6 +114,7 @@ const Settings = () => {
 
   // Show newly picked file preview if present, otherwise fall back to saved logo
   const displayImage = logoPreview || currentUser?.logo
+  const secondaryDisplayImage = secondaryLogoPreview || currentUser?.secondaryLogo
 
   return (
     <>
@@ -102,6 +134,26 @@ const Settings = () => {
           )}
           <button type="button" className="btn btn-primary w-100 mt-1" disabled={isLogoUploading} onClick={handleLogoUpload}>
             {isLogoUploading ? 'Uploading...' : 'Upload Logo'}
+          </button>
+        </CardBody>
+      </Card>
+
+      <Card className="mt-4">
+        <CardHeader>
+          <CardTitle as={'h4'}>Update Secondary Logo</CardTitle>
+        </CardHeader>
+        <CardBody>
+          <div className="mb-3">
+            <label className="form-label">Secondary Logo Image</label>
+            <input type="file" accept="image/*" className="form-control" onChange={handleSecondaryLogoChange} />
+          </div>
+          {secondaryDisplayImage && (
+            <div className="mb-3">
+              <img src={secondaryDisplayImage} alt="Secondary Logo Preview" style={{ maxHeight: 100 }} className="rounded border" />
+            </div>
+          )}
+          <button type="button" className="btn btn-primary w-100 mt-1" disabled={isSecondaryLogoUploading} onClick={handleSecondaryLogoUpload}>
+            {isSecondaryLogoUploading ? 'Uploading...' : 'Upload Secondary Logo'}
           </button>
         </CardBody>
       </Card>
