@@ -45,6 +45,8 @@ export interface IMenuList {
   qty: string
   grosaryName: IGrosary[]
   vegitablesName: IVegitables[]
+  menuImage?: string
+  description?: string
   status: string
 }
 
@@ -68,7 +70,6 @@ export const MenuListApi = createApi({
         headers.set('Authorization', `Bearer ${token}`)
       }
 
-      headers.set('Content-Type', 'application/json')
       return headers
     },
   }),

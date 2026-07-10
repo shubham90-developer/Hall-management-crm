@@ -8,6 +8,8 @@ export const menuListSchema = z.object({
   crocekryName: z.array(z.object({ item: z.string(), qty: z.string() })),
   grosaryName: z.array(z.object({ item: z.string(), qty: z.string() })),
   vegitablesName: z.array(z.object({ item: z.string(), qty: z.string() })),
+  menuImage: z.string().optional(),
+  description: z.string().optional(),
 });
 
 export const menuListUpdateValidation = z.object({
@@ -20,4 +22,6 @@ export const menuListUpdateValidation = z.object({
   crocekryName: z.array(z.object({ item: z.string(), qty: z.string() })),
   grosaryName: z.array(z.object({ item: z.string(), qty: z.string() })),
   vegitablesName: z.array(z.object({ item: z.string(), qty: z.string() })),
+  menuImage: z.string().optional(),
+  description: z.string().optional(),
 });

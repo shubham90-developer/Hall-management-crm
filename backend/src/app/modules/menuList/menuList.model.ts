@@ -38,6 +38,14 @@ const MenuListScheme: Schema = new Schema(
         qty: { type: String, default: "" },
       },
     ],
+    menuImage: {
+      type: String,
+      default: "",
+    },
+    description: {
+      type: String,
+      default: "",
+    },
     isDeleted: {
       type: Boolean,
       default: false,

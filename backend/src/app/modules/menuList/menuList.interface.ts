@@ -8,6 +8,8 @@ export interface IMenuList extends Document {
   qty: string;
   grosaryName: Types.ObjectId[];
   vegitablesName: Types.ObjectId[];
+  menuImage: string;
+  description: string;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;

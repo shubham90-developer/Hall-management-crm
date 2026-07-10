@@ -68,6 +68,19 @@ export interface IBooking {
   updatedAt: string
 }
 
+export interface IDayRequirementItem {
+  name: string
+  qty: number
+}
+
+export interface IDayRequirements {
+  functionDate: string
+  bookingsCount: number
+  crockery: IDayRequirementItem[]
+  grocery: IDayRequirementItem[]
+  vegetables: IDayRequirementItem[]
+}
+
 interface IBookingResponse {
   message: string
   success: boolean
@@ -222,7 +235,14 @@ export const bookingApi = createApi({
       transformResponse: (response: IBookingResponse) => response.data as IBooking,
       invalidatesTags: ['Booking'],
     }),
-
+    getDayRequirements: builder.query<IDayRequirements, string>({
+      query: (functionDate) => ({
+        url: `/booking/day-requirements?functionDate=${functionDate}`,
+        method: 'GET',
+      }),
+      transformResponse: (response: any) => response.data,
+      providesTags: ['Booking'],
+    }),
     getUpcomingExternalBookings: builder.query<IBooking[], void>({
       query: () => ({
         url: '/booking/upcoming-external',
@@ -244,4 +264,5 @@ export const {
   useCancelBookingMutation,
   useDeleteBookingMutation,
   useGetUpcomingExternalBookingsQuery,
+  useGetDayRequirementsQuery,
 } = bookingApi

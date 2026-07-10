@@ -108,7 +108,9 @@ const MenuList = () => {
                     <th>Sr No.</th>
                     <th>Buffet Name</th>
                     <th>Category Name</th>
+                    <th>Image</th>
                     <th>Food Item Name</th>
+                    <th>Description</th>
                     <th>Crockery Name</th>
                     <th>QTY</th>
                     <th>Grosary Name</th>
@@ -174,6 +176,27 @@ const MenuList = () => {
                             <strong>{group.categoryName?.categoryName}</strong>
                           </td>
 
+                          {/* Menu Image(s) */}
+                          <td className="text-nowrap">
+                            <div className="d-flex flex-wrap gap-1">
+                              {group.items.map((item: IMenuList) =>
+                                item.menuImage ? (
+                                  <img
+                                    key={item._id}
+                                    src={item.menuImage}
+                                    alt={item.itemName}
+                                    title={item.itemName}
+                                    style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 6 }}
+                                  />
+                                ) : (
+                                  <span key={item._id} className="text-muted fs-12">
+                                    No Image
+                                  </span>
+                                ),
+                              )}
+                            </div>
+                          </td>
+
                           {/* Food Items */}
                           <td className="text-nowrap">
                             <div className="d-flex flex-wrap gap-1">
@@ -183,6 +206,17 @@ const MenuList = () => {
                                 </span>
                               ))}
                             </div>
+                          </td>
+
+                          {/* Description */}
+                          <td style={{ maxWidth: 220 }}>
+                            {group.items.map((item: IMenuList) =>
+                              item.description ? (
+                                <div key={item._id} className="text-truncate small" title={item.description} style={{ maxWidth: 220 }}>
+                                  {item.description}
+                                </div>
+                              ) : null,
+                            )}
                           </td>
 
                           {/* Crockery */}
@@ -248,7 +282,7 @@ const MenuList = () => {
                     })
                   ) : (
                     <tr>
-                      <td colSpan={8} className="text-center">
+                      <td colSpan={10} className="text-center">
                         No Data Found
                       </td>
                     </tr>

@@ -68,6 +68,16 @@ const SpecialMenu = ({
   const activeCategory = activeCategoryProp ?? internalActiveCategory
   const setActiveCategory = onCategoryChange ?? setInternalActiveCategory
 
+  const scrollRef = React.useRef<HTMLDivElement>(null)
+
+  const scrollByCard = (direction: 'left' | 'right') => {
+    if (!scrollRef.current) return
+    const cardWidth = 220 // matches the fixed card width used below
+    scrollRef.current.scrollBy({
+      left: direction === 'left' ? -cardWidth : cardWidth,
+      behavior: 'smooth',
+    })
+  }
   React.useEffect(() => {
     const cats = Object.keys(groupedMenu)
     onCategoriesChange?.(cats)
@@ -196,36 +206,82 @@ const SpecialMenu = ({
             </div>
 
             {/* Items of active tab — same table style as sweet/additional below */}
+            {/* Items of active tab — horizontally scrollable cards with slide buttons */}
             {activeCategory && groupedMenu[activeCategory] && (
-              <div className="table-responsive">
-                <table className="table align-middle mb-0 table-hover table-centered table-bordered">
-                  <thead className="bg-light-subtle">
-                    <tr>
-                      <th style={{ width: 20 }}></th>
-                      <th className="text-nowrap">Item Name</th>
-                      {groupedMenu[activeCategory].some((i) => i._kind !== 'menu') && <th className="text-nowrap">Price</th>}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {groupedMenu[activeCategory].map((item) => (
-                      <tr key={item._id}>
-                        <td>
-                          <div className="form-check">
+              <div className="position-relative">
+                {/* LEFT arrow */}
+                <button
+                  type="button"
+                  className="btn btn-light border rounded-circle shadow-sm position-absolute top-50 start-0 translate-middle-y"
+                  style={{ zIndex: 3, width: 36, height: 36 }}
+                  onClick={() => scrollByCard('left')}>
+                  ‹
+                </button>
+
+                {/* scrollable track */}
+                <div
+                  ref={scrollRef}
+                  className="d-flex flex-nowrap gap-3 overflow-auto px-4 py-1"
+                  style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none' }}>
+                  {groupedMenu[activeCategory].map((item) => {
+                    const checked = isItemChecked(item)
+                    return (
+                      <div key={item._id} style={{ flex: '0 0 200px', width: 200 }}>
+                        <div
+                          role="button"
+                          onClick={() => handleItemToggle(activeCategory, item, !checked)}
+                          className={`border rounded-3 h-100 overflow-hidden position-relative ${
+                            checked ? 'border-primary shadow-sm bg-primary-subtle' : 'bg-white'
+                          }`}
+                          style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}>
+                          <div className="position-absolute top-0 end-0 m-2" style={{ zIndex: 2 }}>
                             <input
                               type="checkbox"
                               className="form-check-input"
-                              checked={isItemChecked(item)}
-                              onChange={(e) => handleItemToggle(activeCategory, item, e.target.checked)}
+                              checked={checked}
+                              onChange={(e) => {
+                                e.stopPropagation()
+                                handleItemToggle(activeCategory, item, e.target.checked)
+                              }}
+                              onClick={(e) => e.stopPropagation()}
                             />
-                            <label className="form-check-label">&nbsp;</label>
                           </div>
-                        </td>
-                        <td className="text-nowrap">{item.itemName}</td>
-                        {item._kind !== 'menu' && <td className="text-nowrap">₹{item.price}/-</td>}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+
+                          {item.menuImage ? (
+                            <img src={item.menuImage} alt={item.itemName} style={{ width: '100%', height: 110, objectFit: 'cover' }} />
+                          ) : (
+                            <div className="d-flex align-items-center justify-content-center bg-light text-muted" style={{ height: 110 }}>
+                              No Image
+                            </div>
+                          )}
+
+                          <div className="p-2">
+                            <h6 className="mb-1 fw-semibold text-truncate" title={item.itemName}>
+                              {item.itemName}
+                            </h6>
+
+                            {item.description && (
+                              <p className="text-muted small mb-1 text-truncate" title={item.description}>
+                                {item.description}
+                              </p>
+                            )}
+
+                            {item._kind !== 'menu' && <span className="badge bg-warning-subtle text-dark">₹{item.price}/-</span>}
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                {/* RIGHT arrow */}
+                <button
+                  type="button"
+                  className="btn btn-light border rounded-circle shadow-sm position-absolute top-50 end-0 translate-middle-y"
+                  style={{ zIndex: 3, width: 36, height: 36 }}
+                  onClick={() => scrollByCard('right')}>
+                  ›
+                </button>
               </div>
             )}
           </div>

@@ -26,6 +26,7 @@ const AddMenuDrawer = ({ onAdd }: any) => {
     qty: '',
     grosaryName: [] as QtyItem[],
     vegitablesName: [] as QtyItem[],
+    description: '',
     status: 'Active',
   })
 
@@ -36,7 +37,8 @@ const AddMenuDrawer = ({ onAdd }: any) => {
   const { data: crockeryName = [] } = useGetAllCrockeryListQuery()
   const { data: grosaryName = [] } = useGetAllGrosaryListQuery()
   const { data: vegitablesName = [] } = useGetAllVegitablesListQuery()
-
+  const [menuImageFile, setMenuImageFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string>('')
   //  handle change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -61,11 +63,29 @@ const AddMenuDrawer = ({ onAdd }: any) => {
       return { ...prev, [field]: updated }
     })
   }
-
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setMenuImageFile(file)
+    setImagePreview(URL.createObjectURL(file))
+  }
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      await createMenuList(formData as any).unwrap()
+      const body = new FormData()
+      body.append('itemName', formData.itemName)
+      body.append('qty', formData.qty)
+      body.append('description', formData.description)
+      body.append('categoryName', formData.categoryName)
+      body.append('buffetName', JSON.stringify(formData.buffetName))
+      body.append('crocekryName', JSON.stringify(formData.crocekryName))
+      body.append('grosaryName', JSON.stringify(formData.grosaryName))
+      body.append('vegitablesName', JSON.stringify(formData.vegitablesName))
+      if (menuImageFile) {
+        body.append('menuImage', menuImageFile) // field name must match upload.single("menuImage") on backend
+      }
+
+      await createMenuList(body as any).unwrap()
       toast.success('Menu added successfully')
       setOpen(false)
       setFormData({
@@ -76,8 +96,11 @@ const AddMenuDrawer = ({ onAdd }: any) => {
         qty: '',
         grosaryName: [] as QtyItem[],
         vegitablesName: [] as QtyItem[],
+        description: '',
         status: 'Active',
       })
+      setMenuImageFile(null)
+      setImagePreview('')
     } catch (error) {
       toast.error('Something went wrong')
     }
@@ -211,6 +234,31 @@ const AddMenuDrawer = ({ onAdd }: any) => {
                   <label className="form-label">QTY</label>
 
                   <input type="text" className="form-control" placeholder="" name="qty" value={formData.qty} onChange={handleChange} />
+                </div>
+              </Col>
+              <Col md={6}>
+                <div className="mb-3">
+                  <label className="form-label">Menu Image</label>
+                  <input type="file" accept="image/*" className="form-control" onChange={handleImageChange} />
+                  {imagePreview && (
+                    <div className="mt-2">
+                      <img src={imagePreview} alt="menu preview" style={{ width: 70, height: 70, objectFit: 'cover', borderRadius: 6 }} />
+                    </div>
+                  )}
+                </div>
+              </Col>
+
+              <Col md={6}>
+                <div className="mb-3">
+                  <label className="form-label">Description</label>
+                  <textarea
+                    className="form-control"
+                    rows={2}
+                    name="description"
+                    placeholder="Short description of this food item"
+                    value={formData.description}
+                    onChange={handleChange as any}
+                  />
                 </div>
               </Col>
               <Col md={4}>

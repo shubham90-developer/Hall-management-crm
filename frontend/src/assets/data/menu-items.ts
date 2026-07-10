@@ -77,7 +77,18 @@ export const MENU_ITEMS: MenuItemType[] = [
     icon: 'solar:hamburger-menu-bold-duotone',
     url: '/buffet-name',
   },
-
+  {
+    key: 'vegetables-requirements',
+    label: 'Vegetables Reqs',
+    icon: 'solar:cart-large-bold-duotone',
+    url: '/vegitables',
+  },
+  {
+    key: 'grocery-requirements',
+    label: 'Grocery Requirements',
+    icon: 'solar:cart-large-bold-duotone',
+    url: '/grocery',
+  },
   {
     key: 'menu-category',
     label: 'Menu Category',

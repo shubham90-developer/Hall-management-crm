@@ -450,3 +450,80 @@ export const getUpcomingExternalBookings = async (
     next(error);
   }
 };
+
+export const getDayRequirements = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { functionDate } = req.query;
+    if (!functionDate) {
+      return next(new appError("functionDate is required", 400));
+    }
+
+    const start = new Date(functionDate as string);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 1);
+
+    // 1. Get all bookings on this functionDate
+    const bookings = await Booking.find({
+      functionDate: { $gte: start, $lt: end },
+      status: { $ne: "Cancelled" },
+    }).populate({
+      path: "menu",
+      populate: [
+        { path: "crocekryName.item", model: "CrockeryList" },
+        { path: "grosaryName.item", model: "GrosaryList" },
+        { path: "vegitablesName.item", model: "VegitableList" },
+      ],
+    });
+
+    const grosaryMap: Record<string, { name: string; qty: number }> = {};
+    const crockeryMap: Record<string, { name: string; qty: number }> = {};
+    const vegMap: Record<string, { name: string; qty: number }> = {};
+
+    const addToMap = (map: any, name: string, qtyStr: string) => {
+      if (!name) return;
+      const qtyNum = parseFloat(qtyStr) || 0;
+      if (!map[name]) map[name] = { name, qty: 0 };
+      map[name].qty += qtyNum;
+    };
+
+    for (const booking of bookings as any[]) {
+      for (const menuItem of booking.menu || []) {
+        (menuItem.crocekryName || []).forEach((c: any) =>
+          addToMap(crockeryMap, c.item?.crocekryName, c.qty),
+        );
+        (menuItem.grosaryName || []).forEach((g: any) =>
+          addToMap(grosaryMap, g.item?.grosaryName, g.qty),
+        );
+        (menuItem.vegitablesName || []).forEach((v: any) =>
+          addToMap(vegMap, v.item?.vegitablesName, v.qty),
+        );
+      }
+    }
+
+    res.json({
+      success: true,
+      statusCode: 200,
+      message: "Day requirements calculated successfully",
+      data: {
+        functionDate: start,
+        bookingsCount: bookings.length,
+        crockery: Object.values(crockeryMap).sort((a, b) =>
+          a.name.localeCompare(b.name),
+        ),
+        grocery: Object.values(grosaryMap).sort((a, b) =>
+          a.name.localeCompare(b.name),
+        ),
+        vegetables: Object.values(vegMap).sort((a, b) =>
+          a.name.localeCompare(b.name),
+        ),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

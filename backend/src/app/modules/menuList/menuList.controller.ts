@@ -8,20 +8,24 @@ import { MenuCategory } from "../menuCategory/menuCategory.model";
 import { CrockeryList } from "../crockeryList/crockeryList.model";
 import { GrosaryList } from "../grosaryList/grosaryList.model";
 
+// multipart/form-data sends arrays as JSON strings — parse them back
+const parseIfString = (v: any) =>
+  typeof v === "string" ? JSON.parse(v) : v || [];
+
 export const createMenuList = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const {
-      buffetName,
-      categoryName,
-      itemName,
-      crocekryName,
-      qty,
-      grosaryName,
-    } = req.body;
+    const buffetName = parseIfString(req.body.buffetName);
+    const crocekryName = parseIfString(req.body.crocekryName);
+    const grosaryName = parseIfString(req.body.grosaryName);
+    const vegitablesName = parseIfString(req.body.vegitablesName);
+    const { categoryName, itemName, qty, description } = req.body;
+
+    // image comes from multer/cloudinary, not req.body
+    const menuImage = req.file ? (req.file as any).path : "";
 
     // check duplicate
     const existingMenuList = await MenuList.findOne({
@@ -38,7 +42,17 @@ export const createMenuList = async (
     }
 
     // validate
-    const validatedData = menuListUpdateValidation.parse(req.body);
+    const validatedData = menuListUpdateValidation.parse({
+      buffetName,
+      categoryName,
+      itemName,
+      qty,
+      crocekryName,
+      grosaryName,
+      vegitablesName,
+      menuImage,
+      description,
+    });
 
     // check references
     const [bName, cName, crockeryChecks, grosaryChecks] = await Promise.all([
@@ -138,7 +152,21 @@ export const updateMenuListById = async (
   next: NextFunction,
 ) => {
   try {
-    const validatedData = menuListUpdateValidation.parse(req.body);
+    const body: any = {
+      ...req.body,
+      buffetName: parseIfString(req.body.buffetName),
+      crocekryName: parseIfString(req.body.crocekryName),
+      grosaryName: parseIfString(req.body.grosaryName),
+      vegitablesName: parseIfString(req.body.vegitablesName),
+    };
+
+    // only overwrite menuImage if a new file was uploaded,
+    // otherwise keep the existing image untouched
+    if (req.file) {
+      body.menuImage = (req.file as any).path;
+    }
+
+    const validatedData = menuListUpdateValidation.parse(body);
 
     const updated = await MenuList.findByIdAndUpdate(
       req.params.id,
