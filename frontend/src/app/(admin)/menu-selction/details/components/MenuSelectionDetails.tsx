@@ -320,7 +320,7 @@ const MenuSelectionDetails = ({ bookingId }: Props) => {
                 🍽️ <span>Download Crockery List</span>
               </Link>
 
-              <Link
+              {/* <Link
                 href={`/menu-selction/grosary/${booking._id}`}
                 className="btn btn-warning d-flex align-items-center justify-content-center gap-2 py-2">
                 🛒 <span>Download Grocery List</span>
@@ -330,7 +330,7 @@ const MenuSelectionDetails = ({ bookingId }: Props) => {
                 href={`/menu-selction/vegitables/${booking._id}`}
                 className="btn btn-info text-white d-flex align-items-center justify-content-center gap-2 py-2">
                 🥕 <span>Download Vegetable List</span>
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>

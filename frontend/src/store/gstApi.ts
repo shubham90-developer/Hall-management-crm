@@ -4,6 +4,7 @@ import { RootState as IRootState } from '@/store'
 export interface IGst {
   _id: string
   gst: number
+  hallGst: number
   createdAt?: string
   updatedAt?: string
 }
@@ -50,7 +51,7 @@ export const gstApi = createApi({
       providesTags: ['Gst'],
     }),
 
-    updateGst: builder.mutation<IGst, { gst: number }>({
+    updateGst: builder.mutation<IGst, { gst: number; hallGst: number }>({
       query: (data) => ({
         url: '/gst',
         method: 'PATCH',

@@ -735,20 +735,21 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
                           ))}
                         </select>
                       </Col>
-                      <Col md={isEditable ? 4 : 3}>
+                      <Col md={3}>
                         <label className="form-label">📅 Function Date</label>
                         {isEditable ? (
-                          <select
-                            className="form-select"
+                          <CustomFlatpickr
+                            key={basicForm.functionDate} // ← forces remount so the calendar always reflects current state
+                            className="form-control"
+                            placeholder="Select Function Date"
                             value={basicForm.functionDate}
-                            onChange={(e) => setBasicForm((p) => ({ ...p, functionDate: e.target.value }))}>
-                            <option value="">Select Date</option>
-                            {([enquiryDates.date1, enquiryDates.date2, enquiryDates.date3].filter(Boolean) as string[]).map((iso) => (
-                              <option key={iso} value={iso}>
-                                {new Date(iso).toLocaleDateString('en-IN')}
-                              </option>
-                            ))}
-                          </select>
+                            onChange={(_, dateStr) => setBasicForm((p) => ({ ...p, functionDate: dateStr }))}
+                            options={{
+                              dateFormat: 'Y-m-d',
+                              altInput: true,
+                              altFormat: 'd M Y',
+                            }}
+                          />
                         ) : (
                           <input className="form-control" value={basicForm.functionDate} disabled />
                         )}

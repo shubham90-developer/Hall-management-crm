@@ -12,6 +12,7 @@ export const getGst = async (
     if (!gst) {
       await Gst.create({
         gst: 5,
+        hallGst: 18,
       });
     }
     return res.status(200).json({
@@ -31,15 +32,18 @@ export const updateGst = async (
   next: NextFunction,
 ) => {
   try {
-    const { gst } = req.body;
+    const { gst, hallGst } = req.body; // ← pull hallGst too
 
-    const updateGst = await Gst.findOneAndUpdate({}, { gst }, { new: true });
+    const updateGst = await Gst.findOneAndUpdate(
+      {},
+      { gst, hallGst },
+      { new: true },
+    );
 
     if (!updateGst) {
-      return res.status(404).json({
-        success: false,
-        message: "GST document not found",
-      });
+      return res
+        .status(404)
+        .json({ success: false, message: "GST document not found" });
     }
 
     res.json({

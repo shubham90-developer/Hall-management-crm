@@ -521,10 +521,6 @@ export const getDayRequirements = async (
       return { baseQty: qty * conv.factor, baseUnit: conv.base };
     };
 
-    // Guest-scaled add: same formula as the per-booking requirement sheets —
-    // rate = (item qty ÷ menu item's base guest count), required = rate × actual guests.
-    // Result is then normalized into a base unit before being summed into the map,
-    // so mixed units (e.g. "20kg" and "500g") for the same item combine correctly.
     const addToMap = (
       map: any,
       name: string,

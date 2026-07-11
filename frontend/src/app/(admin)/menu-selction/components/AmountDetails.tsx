@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react'
+import React, { useMemo, useEffect, useState } from 'react'
 import { useGetGstQuery } from '@/store/gstApi'
 import { IMenuList } from '@/store/menuListApi'
 import { ISweetMenu } from '@/store/sweetMenuApi'
@@ -91,6 +91,21 @@ const AmountDetails = ({
 
   const pendingAmount = useMemo(() => finalAmount - advance, [finalAmount, advance])
 
+  // Local display string for Discount — decoupled from the numeric value so:
+  // - it shows blank by default when discount is 0
+  // - typing "0" doesn't get wiped back to blank (it only tracks the numeric value, not display text)
+  const [discountInput, setDiscountInput] = useState(pricingForm.discount === 0 ? '' : String(pricingForm.discount))
+
+  // Keep display text in sync only when discount changes from OUTSIDE this input
+  // (e.g. a different booking is loaded) — not when it changes because of our own typing,
+  // otherwise typing "0" would immediately get reset back to blank.
+  useEffect(() => {
+    const currentInputAsNumber = discountInput === '' ? 0 : Number(discountInput)
+    if (currentInputAsNumber !== pricingForm.discount) {
+      setDiscountInput(pricingForm.discount === 0 ? '' : String(pricingForm.discount))
+    }
+  }, [pricingForm.discount])
+
   useEffect(() => {
     onCalculatedChange({
       totalAmount: combinedTotalAmount,
@@ -136,14 +151,29 @@ const AmountDetails = ({
           <input
             type="number"
             className="form-control"
-            value={pricingForm.discount === 0 ? '' : pricingForm.discount}
-            onChange={(e) => onPricingChange('discount', Number(e.target.value))}
+            value={discountInput}
+            onChange={(e) => {
+              const val = e.target.value
+              setDiscountInput(val)
+              onPricingChange('discount', val === '' ? 0 : Number(val))
+            }}
           />
         </div>
 
         <div className="col-md-3">
           <label className="form-label">Final Amount</label>
           <input type="number" className="form-control" value={finalAmount === 0 ? '' : finalAmount} disabled />
+        </div>
+
+        <div className="col-md-3">
+          <label className="form-label">💵 Advance</label>
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Enter advance amount"
+            value={advance === 0 ? '' : advance}
+            onChange={(e) => onAdvanceChange(Number(e.target.value))}
+          />
         </div>
 
         <div className="col-md-3">

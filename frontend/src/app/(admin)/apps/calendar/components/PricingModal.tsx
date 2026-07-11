@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { Modal, ModalHeader, ModalTitle, ModalBody, ModalFooter, Button } from 'react-bootstrap'
 import { useRouter } from 'next/navigation'
 import { useUpdatePricingBookingMutation, IBooking } from '@/store/bookingApi'
+import { useGetGstQuery } from '@/store/gstApi'
 import Swal from 'sweetalert2'
 
 interface Props {
@@ -12,13 +13,11 @@ interface Props {
   booking: IBooking
 }
 
-const CGST_RATE = 0.09
-const SGST_RATE = 0.09
-
 const PricingModal = ({ show, onHide, booking }: Props) => {
   const router = useRouter()
   const [hallAmount, setHallAmount] = useState<number>(booking.hallAmount || 0)
   const [updatePricing, { isLoading }] = useUpdatePricingBookingMutation()
+  const { data: gstData } = useGetGstQuery()
 
   const isNB = booking.status === 'NB'
 
@@ -26,8 +25,14 @@ const PricingModal = ({ show, onHide, booking }: Props) => {
     setHallAmount(booking.hallAmount || 0)
   }, [booking, show])
 
-  const cgst = isNB ? 0 : Number((hallAmount * CGST_RATE).toFixed(2))
-  const sgst = isNB ? 0 : Number((hallAmount * SGST_RATE).toFixed(2))
+  // Hall GST from the GST master is the combined rate — split equally between CGST and SGST
+  const hallGst = gstData?.hallGst || 0
+  const cgstRate = hallGst / 2 / 100
+  const sgstRate = hallGst / 2 / 100
+
+  const cgst = isNB ? 0 : Number((hallAmount * cgstRate).toFixed(2))
+  const sgst = isNB ? 0 : Number((hallAmount * sgstRate).toFixed(2))
+  const totalGst = Number((cgst + sgst).toFixed(2))
   const finalPayable = hallAmount + cgst + sgst
 
   const handleSave = async () => {
@@ -56,15 +61,26 @@ const PricingModal = ({ show, onHide, booking }: Props) => {
           <input type="number" className="form-control" value={hallAmount} onChange={(e) => setHallAmount(Number(e.target.value))} min={0} />
         </div>
 
-        <div className="d-flex justify-content-between mb-2">
-          <span className="text-muted">CGST (9%)</span>
-          <span className="fw-semibold">₹{cgst}</span>
-        </div>
-        <div className="d-flex justify-content-between mb-2">
-          <span className="text-muted">SGST (9%)</span>
-          <span className="fw-semibold">₹{sgst}</span>
-        </div>
-        {isNB && <p className="text-danger small mb-2">NB booking — CGST/SGST set to 0</p>}
+        {!isNB && (
+          <>
+            <div className="d-flex justify-content-between mb-2">
+              <span className="text-muted">CGST ({(hallGst / 2).toFixed(2)}%)</span>
+              <span className="fw-semibold">₹{cgst}</span>
+            </div>
+            <div className="d-flex justify-content-between mb-2">
+              <span className="text-muted">SGST ({(hallGst / 2).toFixed(2)}%)</span>
+              <span className="fw-semibold">₹{sgst}</span>
+            </div>
+          </>
+        )}
+        {isNB && <p className="text-danger small mb-2">NB booking — CGST/SGST not applicable</p>}
+
+        {!isNB && (
+          <div className="d-flex justify-content-between mb-2">
+            <span className="text-muted fw-semibold">Total GST</span>
+            <span className="fw-semibold">₹{totalGst}</span>
+          </div>
+        )}
 
         <hr />
         <div className="d-flex justify-content-between">

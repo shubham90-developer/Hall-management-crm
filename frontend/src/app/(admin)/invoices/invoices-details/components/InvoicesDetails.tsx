@@ -126,9 +126,11 @@ const InvoicesDetails = ({ bookingId }: Props) => {
       gst: '27ABCDE1234F1Z5',
     },
     items: [
-      { id: 1, item: 'Buffet Charges', qty: 1, price: booking?.totalAmount || 0 },
-      { id: 2, item: 'Additional Charges', qty: 1, price: booking?.additionalAmount || 0 },
-      { id: 3, item: 'Starters + Chat Menu Charges', qty: 1, price: booking?.specialMenuAmount || 0 },
+      ...((booking?.totalAmount || 0) > 0 ? [{ id: 1, item: 'Buffet Charges', qty: 1, price: booking?.totalAmount || 0 }] : []),
+      ...((booking?.additionalAmount || 0) > 0 ? [{ id: 2, item: 'Additional Charges', qty: 1, price: booking?.additionalAmount || 0 }] : []),
+      ...((booking?.starters?.length || 0) > 0 || (booking?.chatMenu?.length || 0) > 0
+        ? [{ id: 3, item: 'Starters + Chat Menu Charges', qty: 1, price: booking?.specialMenuAmount || 0 }]
+        : []),
     ],
   }
 

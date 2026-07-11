@@ -7,6 +7,11 @@ const gstSchema = new Schema<IGst>(
       type: Number,
       required: true,
     },
+    hallGst: {
+      type: Number,
+      required: true,
+      default: 18,
+    },
   },
   {
     timestamps: true,

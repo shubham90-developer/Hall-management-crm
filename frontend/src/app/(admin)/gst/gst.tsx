@@ -10,6 +10,7 @@ import { useNotificationContext } from '@/context/useNotificationContext'
 
 const gstSchema = yup.object({
   gst: yup.number().typeError('GST must be a number').min(0, 'GST cannot be negative').required('GST is required'),
+  hallGst: yup.number().typeError('Hall GST must be a number').min(0, 'Hall GST cannot be negative').required('Hall GST is required'),
 })
 
 type GstFields = yup.InferType<typeof gstSchema>
@@ -30,13 +31,13 @@ const GstSettings = () => {
 
   useEffect(() => {
     if (gstData) {
-      reset({ gst: gstData.gst })
+      reset({ gst: gstData.gst, hallGst: gstData.hallGst })
     }
   }, [gstData, reset])
 
   const onSubmit = handleSubmit(async (values) => {
     try {
-      await updateGst({ gst: values.gst }).unwrap()
+      await updateGst({ gst: values.gst, hallGst: values.hallGst }).unwrap()
       showNotification({ message: 'GST updated successfully', variant: 'success' })
     } catch (error: any) {
       showNotification({ message: error?.data?.message || 'Failed to update GST', variant: 'danger' })
@@ -50,12 +51,27 @@ const GstSettings = () => {
           <CardTitle as={'h4'}>GST Settings</CardTitle>
         </CardHeader>
         <CardBody>
-          <div className="mb-3">
-            <label className="form-label">GST (%)</label>
-            <input {...register('gst')} type="number" step="0.01" className="form-control" placeholder="Enter GST percentage" disabled={fetching} />
-            {errors.gst && <small className="text-danger">{errors.gst.message}</small>}
+          <div className="row g-3">
+            <div className="col-md-6">
+              <label className="form-label">GST (%)</label>
+              <input {...register('gst')} type="number" step="0.01" className="form-control" placeholder="Enter GST percentage" disabled={fetching} />
+              {errors.gst && <small className="text-danger">{errors.gst.message}</small>}
+            </div>
+
+            <div className="col-md-6">
+              <label className="form-label">Hall GST (%)</label>
+              <input
+                {...register('hallGst')}
+                type="number"
+                step="0.01"
+                className="form-control"
+                placeholder="Enter Hall GST percentage"
+                disabled={fetching}
+              />
+              {errors.hallGst && <small className="text-danger">{errors.hallGst.message}</small>}
+            </div>
           </div>
-          <button type="submit" className="btn btn-primary w-100 mt-1" disabled={saving || fetching}>
+          <button type="submit" className="btn btn-primary mt-3 w-100 mt-1" disabled={saving || fetching}>
             {saving ? 'Submitting...' : 'Submit'}
           </button>
         </CardBody>

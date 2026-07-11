@@ -306,69 +306,94 @@ const EnquiryList = () => {
 
       {/* View Enquiry Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Enquiry Details</Modal.Title>
+        <Modal.Header closeButton className="border-0 pb-0">
+          <Modal.Title>📋 Enquiry Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedEnquiry ? (
-            <Row className="g-3">
-              <Col md={6}>
-                <p className="text-muted small mb-1">Customer Name</p>
-                <p className="fw-bold">{selectedEnquiry.customerName}</p>
-              </Col>
-              <Col md={6}>
-                <p className="text-muted small mb-1">Status</p>
-                <span className={`badge ${getStatusBadgeClass(selectedEnquiry.status)} px-2 py-1`}>{selectedEnquiry.status || 'Pending'}</span>
-              </Col>
-              <Col md={6}>
-                <p className="text-muted small mb-1">Mobile</p>
-                <p className="fw-bold">{selectedEnquiry.mobileNo}</p>
-              </Col>
-              <Col md={6}>
-                <p className="text-muted small mb-1">Alternate Mobile</p>
-                <p className="fw-bold">{selectedEnquiry.alternateMobileNo}</p>
-              </Col>
-              <Col md={6}>
-                <p className="text-muted small mb-1">Email</p>
-                <p className="fw-bold text-break">{selectedEnquiry.email}</p>
-              </Col>
-              <Col md={6}>
-                <p className="text-muted small mb-1">Function</p>
-                <p className="fw-bold">{selectedEnquiry.functionName?.functionName}</p>
-              </Col>
-              <Col md={6}>
-                <p className="text-muted small mb-1">Enquiry Date</p>
-                <p className="fw-bold">{formatEnquiryDate(selectedEnquiry.createdAt)}</p>
-              </Col>
-              {selectedEnquiry.guestCount ? (
+            <div>
+              {/* Header block — name + status */}
+              <div className="d-flex justify-content-between align-items-center p-3 rounded-3 mb-4" style={{ background: '#eef2ff' }}>
+                <div className="d-flex align-items-center gap-3">
+                  <div
+                    className="d-flex align-items-center justify-content-center rounded-circle fw-bold text-white"
+                    style={{ width: 48, height: 48, background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', fontSize: 18 }}>
+                    {selectedEnquiry.customerName?.charAt(0)?.toUpperCase() || '?'}
+                  </div>
+                  <div>
+                    <h5 className="mb-0 fw-bold">{selectedEnquiry.customerName}</h5>
+                    <small className="text-muted">{selectedEnquiry.functionName?.functionName}</small>
+                  </div>
+                </div>
+                <span className={`badge ${getStatusBadgeClass(selectedEnquiry.status)} px-3 py-2`}>{selectedEnquiry.status || 'Pending'}</span>
+              </div>
+
+              {/* Contact info */}
+              <Row className="g-3 mb-3">
                 <Col md={6}>
-                  <p className="text-muted small mb-1">Guest Count</p>
-                  <p className="fw-bold">{selectedEnquiry.guestCount}</p>
+                  <div className="p-3 rounded-3 h-100" style={{ background: '#f8f9fa' }}>
+                    <p className="text-muted small mb-1">📞 Mobile</p>
+                    <p className="fw-bold mb-0">{selectedEnquiry.mobileNo || '—'}</p>
+                  </div>
                 </Col>
-              ) : null}
+                <Col md={6}>
+                  <div className="p-3 rounded-3 h-100" style={{ background: '#f8f9fa' }}>
+                    <p className="text-muted small mb-1">📞 Alternate Mobile</p>
+                    <p className="fw-bold mb-0">{selectedEnquiry.alternateMobileNo || '—'}</p>
+                  </div>
+                </Col>
+                <Col md={6}>
+                  <div className="p-3 rounded-3 h-100" style={{ background: '#f8f9fa' }}>
+                    <p className="text-muted small mb-1">📧 Email</p>
+                    <p className="fw-bold mb-0 text-break">{selectedEnquiry.email || '—'}</p>
+                  </div>
+                </Col>
+                <Col md={6}>
+                  <div className="p-3 rounded-3 h-100" style={{ background: '#f8f9fa' }}>
+                    <p className="text-muted small mb-1">🗓️ Enquiry Date</p>
+                    <p className="fw-bold mb-0">{formatEnquiryDate(selectedEnquiry.createdAt)}</p>
+                  </div>
+                </Col>
+                {selectedEnquiry.guestCount ? (
+                  <Col md={6}>
+                    <div className="p-3 rounded-3 h-100" style={{ background: '#f8f9fa' }}>
+                      <p className="text-muted small mb-1">👪 Guest Count</p>
+                      <p className="fw-bold mb-0">{selectedEnquiry.guestCount}</p>
+                    </div>
+                  </Col>
+                ) : null}
+              </Row>
+
+              {/* Function dates as pills */}
               {(selectedEnquiry.date1 || selectedEnquiry.date2 || selectedEnquiry.date3) && (
-                <Col md={12}>
-                  <p className="text-muted small mb-1">Function Dates</p>
-                  <p className="fw-bold">
+                <div className="p-3 rounded-3 mb-3" style={{ background: '#fff7ed' }}>
+                  <p className="text-muted small mb-2">📅 Function Dates</p>
+                  <div className="d-flex flex-wrap gap-2">
                     {[selectedEnquiry.date1, selectedEnquiry.date2, selectedEnquiry.date3]
                       .map((d) => formatSimpleDate(d))
                       .filter(Boolean)
-                      .join(' · ')}
-                  </p>
-                </Col>
+                      .map((d, i) => (
+                        <span key={i} className="badge bg-warning-subtle text-dark px-3 py-2">
+                          {d}
+                        </span>
+                      ))}
+                  </div>
+                </div>
               )}
+
+              {/* Notes */}
               {selectedEnquiry.notes && (
-                <Col md={12}>
-                  <p className="text-muted small mb-1">Notes</p>
-                  <p className="fw-bold">{selectedEnquiry.notes}</p>
-                </Col>
+                <div className="p-3 rounded-3" style={{ background: '#f0fdf4' }}>
+                  <p className="text-muted small mb-1">📝 Notes</p>
+                  <p className="fw-semibold mb-0">{selectedEnquiry.notes}</p>
+                </div>
               )}
-            </Row>
+            </div>
           ) : (
             <p className="text-muted mb-0">No enquiry selected.</p>
           )}
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className="border-0">
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Close
           </Button>
