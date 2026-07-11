@@ -551,7 +551,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
 
       toast.success('Invoice created successfully')
       toggle() // closes the booking modal
-      router.push(`/invoices/invoices-details/${result._id}`)
+      router.push(`/invoice/view/${result._id}`)
     } catch (error: any) {
       toast.error(error?.data?.message || 'Failed to create invoice')
     }
