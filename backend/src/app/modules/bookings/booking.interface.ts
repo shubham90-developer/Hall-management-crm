@@ -40,4 +40,10 @@ export interface IBooking extends Document {
   cgst: Number;
   sgst: Number;
   hallFinalAmount: Number;
+  crockeryList: {
+    name: string;
+    unit: string;
+    currentQty: number;
+    additionalQty: number;
+  }[];
 }

@@ -172,6 +172,15 @@ const BookingSchema = new Schema<IBooking>(
     cgst: { type: Number, default: 0 },
     sgst: { type: Number, default: 0 },
     hallFinalAmount: { type: Number, default: 0 },
+    crockeryList: [
+      {
+        name: { type: String, required: true },
+        unit: { type: String, default: "" },
+        currentQty: { type: Number, default: 0 },
+        additionalQty: { type: Number, default: 0 },
+        _id: false,
+      },
+    ],
   },
   {
     timestamps: true,

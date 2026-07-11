@@ -1,6 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RootState as IRootState } from '@/store'
 
+export interface ICrockeryItem {
+  name: string
+  unit: string
+  currentQty: number
+  additionalQty: number
+}
 export interface IBooking {
   _id: string
   bookingNo?: string
@@ -64,6 +70,7 @@ export interface IBooking {
   cgst?: number
   sgst?: number
   hallFinalAmount?: number
+  crockeryList?: ICrockeryItem[]
   createdAt: string
   updatedAt: string
 }
@@ -218,7 +225,16 @@ export const bookingApi = createApi({
       transformResponse: (response: IBookingResponse) => response.data as IBooking,
       invalidatesTags: ['Booking'],
     }),
-
+    // step=crockery
+    updateCrockeryBooking: builder.mutation<IBooking, { id: string; data: { crockeryList: ICrockeryItem[] } }>({
+      query: ({ id, data }) => ({
+        url: `/booking/${id}?step=crockery`,
+        method: 'PATCH',
+        body: data,
+      }),
+      transformResponse: (response: IBookingResponse) => response.data as IBooking,
+      invalidatesTags: ['Booking'],
+    }),
     cancelBooking: builder.mutation<IBooking, string>({
       query: (id) => ({
         url: `/booking/${id}/cancel`,
@@ -266,4 +282,5 @@ export const {
   useDeleteBookingMutation,
   useGetUpcomingExternalBookingsQuery,
   useGetDayRequirementsQuery,
+  useUpdateCrockeryBookingMutation,
 } = bookingApi

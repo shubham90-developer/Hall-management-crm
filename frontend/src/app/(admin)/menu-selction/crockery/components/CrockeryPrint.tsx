@@ -42,40 +42,51 @@ const CrockeryPrint = () => {
   // Booking's actual guest count — the basis for every calculated quantity
   const guests = Number(booking?.guests) || 0
 
-  const crockeryMap: Record<string, { name: string; qty: number; unit: string }> = {}
+  // ---- Build crockeryItems: prefer saved crockeryList, else calculate from menu ----
+  let crockeryItems: { name: string; unit: string; currentQty: number; additionalQty: number }[] = []
 
-  ;(booking?.menu as any[])?.forEach((menuItem: any) => {
-    // baseQty = the guest count this menu item's crockery quantities were originally set for
-    const baseQty = Number(menuItem.qty) || 0
+  if (booking?.crockeryList?.length) {
+    // Already saved via the Crockery modal -> use saved current + additional values directly
+    crockeryItems = (booking.crockeryList as any[]).map((item) => ({
+      name: item.name,
+      unit: item.unit || '',
+      currentQty: Number(item.currentQty) || 0,
+      additionalQty: Number(item.additionalQty) || 0,
+    }))
+  } else {
+    // Not saved yet -> fall back to calculating from selected menus
+    const crockeryMap: Record<string, { name: string; qty: number; unit: string }> = {}
 
-    const crockeryList = Array.isArray(menuItem.crocekryName) ? menuItem.crocekryName : []
+    ;(booking?.menu as any[])?.forEach((menuItem: any) => {
+      const baseQty = Number(menuItem.qty) || 0
+      const crockeryList = Array.isArray(menuItem.crocekryName) ? menuItem.crocekryName : []
 
-    crockeryList.forEach((entry: any) => {
-      // entry = { item: { _id, crocekryName, ... }, qty: '200pcs' } (after populate fix)
-      const crocId = entry.item?._id
-      const crocName = entry.item?.crocekryName || '--'
-      const entryQty = parseQtyNumber(entry.qty)
-      const unit = parseUnit(entry.qty)
+      crockeryList.forEach((entry: any) => {
+        const crocId = entry.item?._id
+        const crocName = entry.item?.crocekryName || '--'
+        const entryQty = parseQtyNumber(entry.qty)
+        const unit = parseUnit(entry.qty)
 
-      if (!crocId) return
+        if (!crocId) return
 
-      // rate per guest for this item, based on how it was set up in Add Menu
-      const rate = baseQty > 0 ? entryQty / baseQty : 0
-      const required = Number((rate * guests).toFixed(2))
+        const rate = baseQty > 0 ? entryQty / baseQty : 0
+        const required = Number((rate * guests).toFixed(2))
 
-      if (crockeryMap[crocId]) {
-        crockeryMap[crocId].qty += required
-      } else {
-        crockeryMap[crocId] = { name: crocName, qty: required, unit }
-      }
+        if (crockeryMap[crocId]) {
+          crockeryMap[crocId].qty += required
+        } else {
+          crockeryMap[crocId] = { name: crocName, qty: required, unit }
+        }
+      })
     })
-  })
 
-  const crockeryItems = Object.values(crockeryMap).map((item) => ({
-    name: item.name,
-    qty: Number(item.qty.toFixed(2)),
-    unit: item.unit,
-  }))
+    crockeryItems = Object.values(crockeryMap).map((item) => ({
+      name: item.name,
+      unit: item.unit,
+      currentQty: Number(item.qty.toFixed(2)),
+      additionalQty: 0,
+    }))
+  }
 
   const bookingDetails = {
     date: booking?.bookingDate ? new Date(booking.bookingDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '--',
@@ -193,13 +204,15 @@ const CrockeryPrint = () => {
                 <tr style={{ background: '#f8fafc' }}>
                   <th style={thStyle}>#</th>
                   <th style={thStyle}>Item Name</th>
-                  <th style={thStyle}>Required Qty (for {guests} guests)</th>
+                  <th style={thStyle}>Current Qty (for {guests} guests)</th>
+                  <th style={thStyle}>Additional Qty</th>
+                  <th style={thStyle}>Total Qty</th>
                 </tr>
               </thead>
               <tbody>
                 {crockeryItems.length === 0 ? (
                   <tr>
-                    <td colSpan={3} style={{ ...tdStyle, textAlign: 'center', color: '#999' }}>
+                    <td colSpan={5} style={{ ...tdStyle, textAlign: 'center', color: '#999' }}>
                       No crockery items found
                     </td>
                   </tr>
@@ -208,8 +221,14 @@ const CrockeryPrint = () => {
                     <tr key={index}>
                       <td style={tdStyle}>{index + 1}</td>
                       <td style={tdStyle}>{item.name}</td>
+                      <td style={tdStyle}>
+                        {item.currentQty} {item.unit}
+                      </td>
+                      <td style={tdStyle}>
+                        {item.additionalQty} {item.unit}
+                      </td>
                       <td style={{ ...tdStyle, fontWeight: 700 }}>
-                        {item.qty} {item.unit}
+                        {item.currentQty + item.additionalQty} {item.unit}
                       </td>
                     </tr>
                   ))

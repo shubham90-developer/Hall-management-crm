@@ -6,6 +6,7 @@ import {
   BasicBookingUpdateValidation,
   MenuBookingValidation,
   PricingBookingValidation,
+  CrockeryBookingValidation,
 } from "./booking.validation";
 import { HallType } from "../hallType/hallType.model";
 import { Counter } from "./booking.model";
@@ -294,8 +295,15 @@ export const updateBooking = async (
         sgst,
         hallFinalAmount,
       };
+    } else if (step === "crockery") {
+      validateData = CrockeryBookingValidation.parse(req.body);
     } else {
-      next(new appError("Invalid step. Use: basic | menu | pricing", 400));
+      next(
+        new appError(
+          "Invalid step. Use: basic | menu | pricing | crockery",
+          400,
+        ),
+      );
       return;
     }
 

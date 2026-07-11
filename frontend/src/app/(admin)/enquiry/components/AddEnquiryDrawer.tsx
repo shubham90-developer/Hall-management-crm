@@ -5,6 +5,7 @@ import IconifyIcon from '@/components/wrappers/IconifyIcon'
 import { toast } from 'react-toastify'
 import { useGetAllFunctionsQuery } from '@/store/functionType'
 import { useCreateEnquiryMutation } from '@/store/enquiryApi'
+import CustomFlatpickr from '@/components/CustomFlatpickr'
 
 const initialFormState = {
   functionName: '',
@@ -86,7 +87,7 @@ const AddEnquiryDrawer = ({ onAdd }: any) => {
       <div
         className="position-fixed top-0 end-0 bg-white h-100 shadow-lg"
         style={{
-          width: '420px',
+          width: '650px',
           maxWidth: '100%',
           zIndex: 1050,
           transform: open ? 'translateX(0)' : 'translateX(100%)',
@@ -107,126 +108,141 @@ const AddEnquiryDrawer = ({ onAdd }: any) => {
 
         {/* BODY */}
         <form className="p-3" onSubmit={handleSubmit}>
-          {/* Customer  Name */}
-          <div className="mb-3">
-            <label className="form-label">Customer Name</label>
+          <div className="row g-3">
+            {/* Customer Name */}
+            <div className="col-md-6">
+              <label className="form-label">Customer Name</label>
+              <input type="text" className="form-control" placeholder="" name="customerName" value={formData.customerName} onChange={handleChange} />
+            </div>
 
-            <input type="text" className="form-control" placeholder="" name="customerName" value={formData.customerName} onChange={handleChange} />
-          </div>
-          {/* mobile    */}
-          <div className="mb-3">
-            <label className="form-label">Mobile no</label>
+            {/* mobile */}
+            <div className="col-md-6">
+              <label className="form-label">Mobile no</label>
+              <input type="text" className="form-control" placeholder="" name="mobileNo" value={formData.mobileNo} onChange={handleChange} />
+            </div>
 
-            <input type="text" className="form-control" placeholder="" name="mobileNo" value={formData.mobileNo} onChange={handleChange} />
-          </div>
+            {/* Alternate mobile */}
+            <div className="col-md-6">
+              <label className="form-label">Alternate Mobile no</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder=""
+                name="alternateMobileNo"
+                value={formData.alternateMobileNo}
+                onChange={handleChange}
+              />
+            </div>
 
-          {/*Alternate mobile    */}
-          <div className="mb-3">
-            <label className="form-label">Alternate Mobile no</label>
+            {/* email */}
+            <div className="col-md-6">
+              <label className="form-label">Email</label>
+              <input type="email" className="form-control" placeholder="" name="email" value={formData.email} onChange={handleChange} />
+            </div>
 
-            <input
-              type="text"
-              className="form-control"
-              placeholder=""
-              name="alternateMobileNo"
-              value={formData.alternateMobileNo}
-              onChange={handleChange}
-            />
-          </div>
+            {/* dates */}
+            <div className="col-md-4">
+              <label className="form-label">Date 1</label>
+              <CustomFlatpickr
+                className="form-control"
+                placeholder="Select Date"
+                options={{ enableTime: false }}
+                value={formData.date1}
+                onChange={(_, dateStr) => setFormData((prev) => ({ ...prev, date1: dateStr }))}
+              />
+            </div>
 
-          {/* email    */}
-          <div className="mb-3">
-            <label className="form-label">Email</label>
+            <div className="col-md-4">
+              <label className="form-label">Date 2</label>
+              <CustomFlatpickr
+                className="form-control"
+                placeholder="Select Date"
+                options={{ enableTime: false }}
+                value={formData.date2}
+                onChange={(_, dateStr) => setFormData((prev) => ({ ...prev, date2: dateStr }))}
+              />
+            </div>
 
-            <input type="email" className="form-control" placeholder="" name="email" value={formData.email} onChange={handleChange} />
-          </div>
+            <div className="col-md-4">
+              <label className="form-label">Date 3</label>
+              <CustomFlatpickr
+                className="form-control"
+                placeholder="Select Date"
+                options={{ enableTime: false }}
+                value={formData.date3}
+                onChange={(_, dateStr) => setFormData((prev) => ({ ...prev, date3: dateStr }))}
+              />
+            </div>
 
-          {/* dates    */}
-          <div className="mb-3">
-            <label className="form-label">Date 1</label>
-            <input type="date" className="form-control" name="date1" value={formData.date1} onChange={handleChange} />
-          </div>
+            {/* isJain */}
+            <div className="col-md-6">
+              <label className="form-label">Jain Food Required</label>
+              <select
+                className="form-select"
+                name="isJain"
+                value={String(formData.isJain)}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    isJain: e.target.value === 'true',
+                  }))
+                }>
+                <option value="false">No</option>
+                <option value="true">Yes</option>
+              </select>
+            </div>
 
-          <div className="mb-3">
-            <label className="form-label">Date 2</label>
-            <input type="date" className="form-control" name="date2" value={formData.date2} onChange={handleChange} />
-          </div>
+            {/* guest count */}
+            <div className="col-md-6">
+              <label className="form-label">Approximate Guest Count</label>
+              <input
+                type="number"
+                min={0}
+                className="form-control"
+                placeholder=""
+                name="guestCount"
+                value={formData.guestCount}
+                onChange={handleChange}
+              />
+            </div>
 
-          <div className="mb-3">
-            <label className="form-label">Date 3</label>
-            <input type="date" className="form-control" name="date3" value={formData.date3} onChange={handleChange} />
-          </div>
+            {/* status */}
+            <div className="col-md-6">
+              <label className="form-label">Status</label>
+              <select className="form-select" name="status" value={formData.status} onChange={handleChange}>
+                <option value="Pending">Pending</option>
+                <option value="Confirmed">Confirmed</option>
+                <option value="Hold">Hold</option>
+              </select>
+            </div>
 
-          {/* isJain */}
-          <div className="mb-3">
-            <label className="form-label">Jain Food Required</label>
-            <select
-              className="form-select"
-              name="isJain"
-              value={String(formData.isJain)}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  isJain: e.target.value === 'true',
-                }))
-              }>
-              <option value="false">No</option>
-              <option value="true">Yes</option>
-            </select>
-          </div>
+            {/* function */}
+            <div className="col-md-6">
+              <label className="form-label">Function Type</label>
+              <select className="form-select" name="functionName" value={formData.functionName} onChange={handleChange}>
+                <option value="">Select Function Type</option>
+                {functionData?.map((item: any) => (
+                  <option key={item._id} value={item._id}>
+                    {item.functionName}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          {/* guest count    */}
-          <div className="mb-3">
-            <label className="form-label">Approximate Guest Count</label>
-            <input
-              type="number"
-              min={0}
-              className="form-control"
-              placeholder=""
-              name="guestCount"
-              value={formData.guestCount}
-              onChange={handleChange}
-            />
-          </div>
-
-          {/* notes    */}
-          <div className="mb-3">
-            <label className="form-label">Additional Notes</label>
-            <textarea className="form-control" rows={3} name="notes" value={formData.notes} onChange={handleChange} />
-          </div>
-
-          {/* status    */}
-          <div className="mb-3">
-            <label className="form-label">Status</label>
-            <select className="form-select" name="status" value={formData.status} onChange={handleChange}>
-              <option value="Pending">Pending</option>
-              <option value="Confirmed">Confirmed</option>
-              <option value="Hold">Hold</option>
-            </select>
-          </div>
-
-          {/* function    */}
-          <div className="mb-3">
-            <label className="form-label">Function Type</label>
-
-            <select className="form-select" name="functionName" value={formData.functionName} onChange={handleChange}>
-              <option value="">Select Function Type</option>
-
-              {functionData?.map((item: any) => (
-                <option key={item._id} value={item._id}>
-                  {item.functionName}
-                </option>
-              ))}
-            </select>
+            {/* notes */}
+            <div className="col-md-12">
+              <label className="form-label">Additional Notes</label>
+              <textarea className="form-control" rows={3} name="notes" value={formData.notes} onChange={handleChange} />
+            </div>
           </div>
 
           {/* FOOTER */}
-          <div className="p-3 border-top d-flex gap-2">
-            <button className="btn btn-light w-100" onClick={() => setOpen(false)}>
+          <div className="p-3 border-top d-flex gap-2 mt-3">
+            <button type="button" className="btn btn-light w-100" onClick={() => setOpen(false)}>
               Cancel
             </button>
 
-            <button className="btn btn-primary w-100" disabled={isLoading}>
+            <button type="submit" className="btn btn-primary w-100" disabled={isLoading}>
               <IconifyIcon icon="solar:diskette-broken" /> {isLoading ? 'Adding...' : 'Add Enquiry'}
             </button>
           </div>
