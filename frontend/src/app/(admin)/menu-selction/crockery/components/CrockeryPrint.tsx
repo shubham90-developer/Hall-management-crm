@@ -96,6 +96,7 @@ const CrockeryPrint = () => {
     hall: booking?.hall?.hallName || '--',
     guests: booking?.guests?.toString() || '--',
     mealArrangement: booking?.seatingArrangement || '--',
+    buffets: booking?.noOfBuffets?.toString() || '--',
   }
 
   const downloadPDF = async () => {
@@ -171,7 +172,7 @@ const CrockeryPrint = () => {
                 </tr>
                 <tr>
                   <td style={cellLabel}>👥 Guests</td>
-                  <td style={cellValue}></td>
+                  <td style={cellValue}>{bookingDetails.guests}</td>
                   <td style={cellLabel}>🍽 Meal</td>
                   <td style={cellValue}>{bookingDetails.mealArrangement}</td>
                 </tr>
@@ -180,6 +181,12 @@ const CrockeryPrint = () => {
                   <td style={cellValue}>{bookingDetails.endTime}</td>
                   <td style={cellLabel}>📋 Status</td>
                   <td style={cellValue}>{booking?.status || '--'}</td>
+                </tr>
+                <tr>
+                  <td style={cellLabel}>🍽️ No. of Buffets</td>
+                  <td style={cellValue}>{bookingDetails.buffets}</td>
+                  <td style={cellLabel}></td>
+                  <td style={cellValue}></td>
                 </tr>
               </tbody>
             </table>

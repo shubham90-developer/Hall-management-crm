@@ -1,6 +1,6 @@
 'use client'
 import CustomFlatpickr from '@/components/CustomFlatpickr'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Modal, ModalBody, ModalHeader, ModalTitle, Button, Row, Col } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 import { useLazySearchEnquiryQuery, IEnquiry } from '@/store/enquiryApi'
@@ -138,7 +138,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
   const [updateMenu, { isLoading: savingMenu }] = useUpdateMenuBookingMutation()
   const [updatePricing, { isLoading: savingPrice }] = useUpdatePricingBookingMutation()
   const { data: buffetList = [] } = useGetAllBuggetNameQuery()
-
+  const prefilledBookingIdRef = useRef<string | null>(null)
   // ← Add this below
   useEffect(() => {
     if (buffetList.length > 0 && !selectedMenu) {
@@ -173,7 +173,8 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
 
   // ── Prefill form when editing ────────────────────────────────────
   useEffect(() => {
-    if (existingBooking && isEditable) {
+    if (existingBooking && isEditable && prefilledBookingIdRef.current !== existingBooking._id) {
+      prefilledBookingIdRef.current = existingBooking._id
       setBookingId(existingBooking._id)
       setEnquiryDates({
         date1: existingBooking.enquiry.date1 ? new Date(existingBooking.enquiry.date1).toISOString().split('T')[0] : '',
