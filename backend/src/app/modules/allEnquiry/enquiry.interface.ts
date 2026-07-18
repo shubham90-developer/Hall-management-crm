@@ -13,6 +13,7 @@ export interface IEnquiry extends Document {
   notes?: string;
   status: "Pending" | "Confirmed" | "Hold";
   isJain: boolean;
+  timeSlot: "Morning" | "Afternoon" | "Evening" | "Night";
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;

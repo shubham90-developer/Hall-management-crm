@@ -16,6 +16,7 @@ interface Props {
 const PricingModal = ({ show, onHide, booking }: Props) => {
   const router = useRouter()
   const [hallAmount, setHallAmount] = useState<number>(booking.hallAmount || 0)
+  const [hallAmountMethod, setHallAmountMethod] = useState<string>(booking.hallAmountMethod || 'Cash')
   const [updatePricing, { isLoading }] = useUpdatePricingBookingMutation()
   const { data: gstData } = useGetGstQuery()
 
@@ -23,6 +24,7 @@ const PricingModal = ({ show, onHide, booking }: Props) => {
 
   useEffect(() => {
     setHallAmount(booking.hallAmount || 0)
+    setHallAmountMethod(booking.hallAmountMethod || 'Cash')
   }, [booking, show])
 
   // Hall GST from the GST master is the combined rate — split equally between CGST and SGST
@@ -39,7 +41,7 @@ const PricingModal = ({ show, onHide, booking }: Props) => {
     try {
       await updatePricing({
         id: booking._id,
-        data: { hallAmount, cgst, sgst },
+        data: { hallAmount, cgst, sgst, hallAmountMethod },
       }).unwrap()
 
       onHide()
@@ -59,6 +61,20 @@ const PricingModal = ({ show, onHide, booking }: Props) => {
         <div className="mb-3">
           <label className="form-label">Total Amount (Hall Amount)</label>
           <input type="number" className="form-control" value={hallAmount} onChange={(e) => setHallAmount(Number(e.target.value))} min={0} />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Payment Method</label>
+          <select className="form-select" value={hallAmountMethod} onChange={(e) => setHallAmountMethod(e.target.value)}>
+            <option value="Cash">Cash</option>
+            <option value="Online">Online</option>
+            <option value="Cheque">Cheque</option>
+            <option value="Card">Card</option>
+            <option value="UPI">UPI</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+            <option value="NEFT/RTGS">NEFT/RTGS</option>
+            <option value="Other">Other</option>
+          </select>
         </div>
 
         {!isNB && (

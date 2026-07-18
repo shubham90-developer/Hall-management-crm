@@ -19,6 +19,7 @@ const initialFormState = {
   guestCount: '',
   notes: '',
   isJain: false,
+  timeSlot: 'Morning',
   status: 'Pending',
 }
 
@@ -175,7 +176,7 @@ const AddEnquiryDrawer = ({ onAdd }: any) => {
             </div>
 
             {/* isJain */}
-            <div className="col-md-6">
+            <div className="col-md-4">
               <label className="form-label">Jain Food Required</label>
               <select
                 className="form-select"
@@ -191,9 +192,17 @@ const AddEnquiryDrawer = ({ onAdd }: any) => {
                 <option value="true">Yes</option>
               </select>
             </div>
-
+            <div className="col-md-4">
+              <label className="form-label">Time Slot</label>
+              <select className="form-select" name="timeSlot" value={formData.timeSlot} onChange={handleChange}>
+                <option value="Morning">Morning</option>
+                <option value="Afternoon">Afternoon</option>
+                <option value="Evening">Evening</option>
+                <option value="Night">Night</option>
+              </select>
+            </div>
             {/* guest count */}
-            <div className="col-md-6">
+            <div className="col-md-4">
               <label className="form-label">Approximate Guest Count</label>
               <input
                 type="number"

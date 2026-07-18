@@ -91,6 +91,7 @@ export const PricingBookingValidation = z.object({
   cgst: z.number().min(0).default(0),
   sgst: z.number().min(0).default(0),
   hallFinalAmount: z.number().min(0).default(0),
+  hallAmountMethod: z.string().default("Cash"),
 });
 
 export const CrockeryBookingValidation = z.object({

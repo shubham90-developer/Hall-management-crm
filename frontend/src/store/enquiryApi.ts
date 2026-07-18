@@ -22,6 +22,7 @@ export interface IEnquiry {
   notes?: string
   isJain: boolean
   status: string
+  timeSlot: string
   isDeleted: boolean
   createdAt: string
   updatedAt: string
@@ -46,6 +47,7 @@ interface ICreateEnquiry {
   guestCount?: number
   notes?: string
   isJain: boolean
+  timeSlot: string
   status?: string
 }
 

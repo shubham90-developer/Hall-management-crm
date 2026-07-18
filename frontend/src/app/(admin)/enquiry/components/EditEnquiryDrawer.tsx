@@ -19,6 +19,7 @@ const initialFormState = {
   guestCount: '',
   notes: '',
   isJain: false,
+  timeSlot: 'Morning',
   status: 'Pending',
 }
 
@@ -54,6 +55,7 @@ const EditEnquiryDrawer = ({ item }: any) => {
         guestCount: enquiryData.guestCount != null ? String(enquiryData.guestCount) : '',
         notes: enquiryData.notes || '',
         isJain: enquiryData.isJain || false,
+        timeSlot: enquiryData.timeSlot || 'Morning',
         status: enquiryData.status || 'Pending',
       })
     }
@@ -205,7 +207,7 @@ const EditEnquiryDrawer = ({ item }: any) => {
             </div>
 
             {/* isJain */}
-            <div className="col-md-6">
+            <div className="col-md-4">
               <label className="form-label">Jain Food Required</label>
               <select
                 className="form-select"
@@ -221,9 +223,17 @@ const EditEnquiryDrawer = ({ item }: any) => {
                 <option value="true">Yes</option>
               </select>
             </div>
-
+            <div className="col-md-4">
+              <label className="form-label">Time Slot</label>
+              <select className="form-select" name="timeSlot" value={formData.timeSlot} onChange={handleChange}>
+                <option value="Morning">Morning</option>
+                <option value="Afternoon">Afternoon</option>
+                <option value="Evening">Evening</option>
+                <option value="Night">Night</option>
+              </select>
+            </div>
             {/* guest count */}
-            <div className="col-md-6">
+            <div className="col-md-4">
               <label className="form-label">Approximate Guest Count</label>
               <input
                 type="number"

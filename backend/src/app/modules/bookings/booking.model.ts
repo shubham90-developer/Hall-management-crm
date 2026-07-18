@@ -169,6 +169,7 @@ const BookingSchema = new Schema<IBooking>(
       default: 0,
     },
     hallAmount: { type: Number, default: 0 },
+    hallAmountMethod: { type: String, default: "Cash" },
     cgst: { type: Number, default: 0 },
     sgst: { type: Number, default: 0 },
     hallFinalAmount: { type: Number, default: 0 },

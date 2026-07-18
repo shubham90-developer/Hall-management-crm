@@ -26,6 +26,7 @@ export const createEnquiry = async (
       notes,
       isJain,
       status,
+      timeSlot,
     } = req.body;
 
     // exixting
@@ -56,6 +57,7 @@ export const createEnquiry = async (
       guestCount,
       notes,
       isJain,
+      timeSlot,
       status,
     });
 

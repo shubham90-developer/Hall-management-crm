@@ -38,6 +38,11 @@ const EnquirySchema: Schema = new Schema(
     isJain: {
       type: Boolean,
     },
+    timeSlot: {
+      type: String,
+      enum: ["Morning", "Afternoon", "Evening", "Night"],
+      default: "Morning",
+    },
     status: {
       type: String,
       enum: ["Pending", "Confirmed", "Hold"],

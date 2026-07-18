@@ -362,6 +362,14 @@ const EnquiryList = () => {
                     </div>
                   </Col>
                 ) : null}
+                {selectedEnquiry.guestCount ? (
+                  <Col md={6}>
+                    <div className="p-3 rounded-3 h-100" style={{ background: '#f8f9fa' }}>
+                      <p className="text-muted small mb-1">⏱️ Time Slot</p>
+                      <p className="fw-bold mb-0">{selectedEnquiry.timeSlot}</p>
+                    </div>
+                  </Col>
+                ) : null}
               </Row>
 
               {/* Function dates as pills */}

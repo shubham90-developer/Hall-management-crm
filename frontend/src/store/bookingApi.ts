@@ -70,6 +70,7 @@ export interface IBooking {
   cgst?: number
   sgst?: number
   hallFinalAmount?: number
+  hallAmountMethod?: string
   crockeryList?: ICrockeryItem[]
   createdAt: string
   updatedAt: string
@@ -111,20 +112,19 @@ interface ICreateBooking {
   status: 'Confirmed' | 'Pencil' | 'Cancelled' | 'NB'
 }
 
-interface IUpdateMenuBooking {
-  Muhurat?: string
-  guests?: number
-  seatingArrangement?: string
-  mealTime?: string | null
-  menu?: string[]
-  sweets?: string[]
-  additional?: string[]
-  externalItems?: string[]
-  starters?: string[]
-  chatMenu?: string[]
-  menuType?: 'buffet' | 'starters' | 'chatmenu' | 'customize'
-  selectedBuffetId?: string | null
-  other?: { id: string; startTime: string; endTime: string }[]
+interface IUpdatePricingBooking {
+  totalAmount?: number
+  additionalAmount?: number
+  subtotalamount?: number
+  gst?: number
+  discount?: number
+  grandTotal?: number
+  finalAmount?: number
+  pendingAmount?: number
+  hallAmount?: number
+  cgst?: number
+  sgst?: number
+  hallAmountMethod?: string
 }
 
 interface IUpdatePricingBooking {
