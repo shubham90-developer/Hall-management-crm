@@ -7,9 +7,8 @@ import { useRouter } from 'next/navigation'
 import { useUpdateCrockeryBookingMutation, ICrockeryItem } from '@/store/bookingApi'
 
 interface Props {
-  show: boolean
-  onHide: () => void
   booking: any
+  onCancel: () => void
 }
 
 const parseQtyNumber = (val: string) => {
@@ -22,13 +21,14 @@ const parseUnit = (val: string) => {
   return match ? match[0] : ''
 }
 
-const CrockeryListModal = ({ show, onHide, booking }: Props) => {
+// Content-only component (no own <Modal> wrapper) — see BuffetCountModal.tsx.
+const CrockeryListModal = ({ booking, onCancel }: Props) => {
   const [items, setItems] = useState<ICrockeryItem[]>([])
   const [updateCrockeryBooking, { isLoading }] = useUpdateCrockeryBookingMutation()
   const router = useRouter()
 
   useEffect(() => {
-    if (!show || !booking) return
+    if (!booking) return
 
     if (booking.crockeryList?.length) {
       setItems(booking.crockeryList)
@@ -58,9 +58,8 @@ const CrockeryListModal = ({ show, onHide, booking }: Props) => {
     })
 
     setItems(Object.values(crockeryMap))
-  }, [booking, show])
+  }, [booking])
 
-  // update additionalQty for an existing row
   const handleAdditionalChange = (idx: number, value: string) => {
     setItems((prev) => {
       const updated = [...prev]
@@ -69,12 +68,10 @@ const CrockeryListModal = ({ show, onHide, booking }: Props) => {
     })
   }
 
-  // typing into the blank bottom row's name field
   const handleNewRowNameChange = (value: string) => {
     setItems((prev) => [...prev, { name: value, unit: '', currentQty: 0, additionalQty: 0 }])
   }
 
-  // update name for a row that was added via the blank row (last row, still empty additionalQty ok)
   const handleNameChange = (idx: number, value: string) => {
     setItems((prev) => {
       const updated = [...prev]
@@ -87,7 +84,7 @@ const CrockeryListModal = ({ show, onHide, booking }: Props) => {
     try {
       const cleanItems = items.filter((i) => i.name.trim() !== '')
       await updateCrockeryBooking({ id: booking._id, data: { crockeryList: cleanItems } }).unwrap()
-      onHide()
+      onCancel()
       router.push(`/menu-selction/crockery/${booking._id}`)
     } catch {
       Swal.fire('Error', 'Failed to save crockery list', 'error')
@@ -95,8 +92,8 @@ const CrockeryListModal = ({ show, onHide, booking }: Props) => {
   }
 
   return (
-    <Modal show={show} onHide={onHide} size="lg" centered>
-      <Modal.Header closeButton>
+    <>
+      <Modal.Header closeButton onHide={onCancel}>
         <Modal.Title>🍽️ Crockery List</Modal.Title>
       </Modal.Header>
 
@@ -141,7 +138,6 @@ const CrockeryListModal = ({ show, onHide, booking }: Props) => {
               </tr>
             ))}
 
-            {/* always-present blank row to start a brand new item */}
             <tr>
               <td>{items.length + 1}</td>
               <td>
@@ -161,14 +157,14 @@ const CrockeryListModal = ({ show, onHide, booking }: Props) => {
       </Modal.Body>
 
       <Modal.Footer>
-        <Button variant="light" onClick={onHide}>
+        <Button variant="light" onClick={onCancel}>
           Cancel
         </Button>
         <Button variant="success" onClick={handleSave} disabled={isLoading}>
           {isLoading ? 'Saving...' : 'Save Crockery'}
         </Button>
       </Modal.Footer>
-    </Modal>
+    </>
   )
 }
 

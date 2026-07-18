@@ -7,6 +7,7 @@ import AddGrosaryList from './AddGrosaryList'
 import AddCrokeryList from './AddCrokeryList'
 import { useGetBookingByIdQuery } from '@/store/bookingApi'
 import { useState } from 'react'
+import { Modal } from 'react-bootstrap'
 import CrockeryListModal from '@/app/(admin)/crockery-list/components/CrockeryListModal'
 import BuffetCountModal from '@/app/(admin)/crockery-list/components/BuffetCountModal'
 interface Props {
@@ -405,16 +406,19 @@ const MenuSelectionDetails = ({ bookingId }: Props) => {
           </div>
         </div>
       </div>
-      <BuffetCountModal
-        show={activeModal === 'buffet'}
-        onHide={() => setActiveModal('none')}
-        booking={booking}
-        onSaved={() => setActiveModal('none')}
-        onExited={() => {
-          if (activeModal === 'none') setActiveModal('crockery')
-        }}
-      />
-      <CrockeryListModal show={activeModal === 'crockery'} onHide={() => setActiveModal('none')} booking={booking} />
+
+      {activeModal !== 'none' && (
+        <div className="modal fade show d-block" style={{ background: 'rgba(0,0,0,0.5)' }} tabIndex={-1}>
+          <div className="modal-dialog modal-lg modal-dialog-centered">
+            <div className="modal-content">
+              {activeModal === 'buffet' && (
+                <BuffetCountModal booking={booking} onCancel={() => setActiveModal('none')} onSaved={() => setActiveModal('crockery')} />
+              )}
+              {activeModal === 'crockery' && <CrockeryListModal booking={booking} onCancel={() => setActiveModal('none')} />}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

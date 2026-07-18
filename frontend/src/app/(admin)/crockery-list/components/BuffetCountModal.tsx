@@ -6,20 +6,21 @@ import Swal from 'sweetalert2'
 import { useUpdateCrockeryBookingMutation } from '@/store/bookingApi'
 
 interface Props {
-  show: boolean
-  onHide: () => void
   booking: any
+  onCancel: () => void
   onSaved: () => void
-  onExited?: () => void
 }
 
-const BuffetCountModal = ({ show, onHide, booking, onSaved, onExited }: Props) => {
+// Content-only component — no own <Modal> wrapper. Rendered inside the
+// shared Modal shell in MenuSelectionDetails.tsx to avoid two overlapping
+// Modal/backdrop instances (which was causing the auto-close bug).
+const BuffetCountModal = ({ booking, onCancel, onSaved }: Props) => {
   const [noOfBuffets, setNoOfBuffets] = useState<number>(booking?.noOfBuffets || 0)
   const [updateCrockeryBooking, { isLoading }] = useUpdateCrockeryBookingMutation()
 
   useEffect(() => {
-    if (show) setNoOfBuffets(booking?.noOfBuffets || 0)
-  }, [booking, show])
+    setNoOfBuffets(booking?.noOfBuffets || 0)
+  }, [booking])
 
   const handleSave = async () => {
     try {
@@ -31,8 +32,8 @@ const BuffetCountModal = ({ show, onHide, booking, onSaved, onExited }: Props) =
   }
 
   return (
-    <Modal show={show} onHide={onHide} centered onExited={onExited}>
-      <Modal.Header closeButton>
+    <>
+      <Modal.Header closeButton onHide={onCancel}>
         <Modal.Title>🍽️ No. of Buffets</Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -48,14 +49,14 @@ const BuffetCountModal = ({ show, onHide, booking, onSaved, onExited }: Props) =
         </select>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="light" onClick={onHide}>
+        <Button variant="light" onClick={onCancel}>
           Cancel
         </Button>
         <Button variant="success" onClick={handleSave} disabled={isLoading}>
           {isLoading ? 'Saving...' : 'Save & Continue'}
         </Button>
       </Modal.Footer>
-    </Modal>
+    </>
   )
 }
 
