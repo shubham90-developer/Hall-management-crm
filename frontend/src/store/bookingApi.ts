@@ -72,6 +72,7 @@ export interface IBooking {
   hallFinalAmount?: number
   hallAmountMethod?: string
   crockeryList?: ICrockeryItem[]
+  noOfBuffets?: number
   createdAt: string
   updatedAt: string
 }
@@ -112,19 +113,20 @@ interface ICreateBooking {
   status: 'Confirmed' | 'Pencil' | 'Cancelled' | 'NB'
 }
 
-interface IUpdatePricingBooking {
-  totalAmount?: number
-  additionalAmount?: number
-  subtotalamount?: number
-  gst?: number
-  discount?: number
-  grandTotal?: number
-  finalAmount?: number
-  pendingAmount?: number
-  hallAmount?: number
-  cgst?: number
-  sgst?: number
-  hallAmountMethod?: string
+interface IUpdateMenuBooking {
+  Muhurat?: string
+  guests?: number
+  seatingArrangement?: string
+  mealTime?: string | null
+  menu?: string[]
+  sweets?: string[]
+  additional?: string[]
+  externalItems?: string[]
+  starters?: string[]
+  chatMenu?: string[]
+  menuType?: 'buffet' | 'starters' | 'chatmenu' | 'customize'
+  selectedBuffetId?: string | null
+  other?: { id: string; startTime: string; endTime: string }[]
 }
 
 interface IUpdatePricingBooking {
@@ -140,6 +142,7 @@ interface IUpdatePricingBooking {
   hallAmount?: number
   cgst?: number
   sgst?: number
+  hallAmountMethod?: string
 }
 
 export const bookingApi = createApi({
@@ -226,7 +229,7 @@ export const bookingApi = createApi({
       invalidatesTags: ['Booking'],
     }),
     // step=crockery
-    updateCrockeryBooking: builder.mutation<IBooking, { id: string; data: { crockeryList: ICrockeryItem[] } }>({
+    updateCrockeryBooking: builder.mutation<IBooking, { id: string; data: { crockeryList?: ICrockeryItem[]; noOfBuffets?: number } }>({
       query: ({ id, data }) => ({
         url: `/booking/${id}?step=crockery`,
         method: 'PATCH',

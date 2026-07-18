@@ -64,16 +64,21 @@ const PricingModal = ({ show, onHide, booking }: Props) => {
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Payment Method</label>
+          <label className="form-label">💳 Payment Method</label>
           <select className="form-select" value={hallAmountMethod} onChange={(e) => setHallAmountMethod(e.target.value)}>
-            <option value="Cash">Cash</option>
-            <option value="Online">Online</option>
-            <option value="Cheque">Cheque</option>
-            <option value="Card">Card</option>
-            <option value="UPI">UPI</option>
-            <option value="Bank Transfer">Bank Transfer</option>
-            <option value="NEFT/RTGS">NEFT/RTGS</option>
-            <option value="Other">Other</option>
+            <option value="--" disabled>
+              Select Payment Method
+            </option>
+            <option value="Cash">💵 Cash</option>
+            <option value="UPI">📱 UPI</option>
+            <option value="PhonePe">📲 PhonePe</option>
+            <option value="Google Pay">💳 Google Pay</option>
+            <option value="Paytm">💰 Paytm</option>
+            <option value="Bank Transfer">🏦 Bank Transfer</option>
+            <option value="Cheque">🧾 Cheque</option>
+            <option value="Card">💳 Debit / Credit Card</option>
+            <option value="Net Banking">🌐 Net Banking</option>
+            <option value="Pending">⏳ Pending</option>
           </select>
         </div>
 

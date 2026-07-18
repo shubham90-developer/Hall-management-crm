@@ -127,6 +127,7 @@ const Bill = ({ bookingId }: Props) => {
   const cgst = booking?.cgst || 0
   const sgst = booking?.sgst || 0
   const finalPayable = booking?.hallFinalAmount || hallAmount + cgst + sgst
+  const hallAmountMethod = booking?.hallAmountMethod || '--'
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -297,6 +298,10 @@ const Bill = ({ bookingId }: Props) => {
                           <tr>
                             <td>Hall Amount</td>
                             <td className="text-end fw-semibold">₹{hallAmount.toLocaleString()}</td>
+                          </tr>
+                          <tr>
+                            <td>Payment Method</td>
+                            <td className="text-end fw-semibold">{hallAmountMethod}</td>
                           </tr>
                           <tr>
                             <td>CGST (9%)</td>

@@ -95,14 +95,17 @@ export const PricingBookingValidation = z.object({
 });
 
 export const CrockeryBookingValidation = z.object({
-  crockeryList: z.array(
-    z.object({
-      name: z.string(),
-      unit: z.string().optional(),
-      currentQty: z.number(),
-      additionalQty: z.number(),
-    }),
-  ),
+  noOfBuffets: z.number().min(0).optional(),
+  crockeryList: z
+    .array(
+      z.object({
+        name: z.string(),
+        unit: z.string().optional(),
+        currentQty: z.number(),
+        additionalQty: z.number(),
+      }),
+    )
+    .optional(),
 });
 // ── Full Validation (all steps combined) ──────────────────────────────────────
 export const BookingValidation = BasicBookingValidation.merge(

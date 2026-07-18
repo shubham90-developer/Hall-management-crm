@@ -8,6 +8,7 @@ import AddCrokeryList from './AddCrokeryList'
 import { useGetBookingByIdQuery } from '@/store/bookingApi'
 import { useState } from 'react'
 import CrockeryListModal from '@/app/(admin)/crockery-list/components/CrockeryListModal'
+import BuffetCountModal from '@/app/(admin)/crockery-list/components/BuffetCountModal'
 interface Props {
   bookingId?: string
 }
@@ -22,7 +23,7 @@ const minutesToTime = (minutes: number): string => {
 
 const MenuSelectionDetails = ({ bookingId }: Props) => {
   const { data: booking, isLoading } = useGetBookingByIdQuery(bookingId!, { skip: !bookingId })
-  const [showCrockeryModal, setShowCrockeryModal] = useState(false)
+  const [activeModal, setActiveModal] = useState<'none' | 'buffet' | 'crockery'>('none')
   if (isLoading) {
     return (
       <div className="d-flex justify-content-center align-items-center py-5">
@@ -317,7 +318,7 @@ const MenuSelectionDetails = ({ bookingId }: Props) => {
                 </Link>
 
                 <button
-                  onClick={() => setShowCrockeryModal(true)}
+                  onClick={() => setActiveModal('buffet')}
                   className="btn btn-success d-flex align-items-center justify-content-center gap-2 py-2">
                   🍽️ <span>Download Crockery List</span>
                 </button>
@@ -404,7 +405,16 @@ const MenuSelectionDetails = ({ bookingId }: Props) => {
           </div>
         </div>
       </div>
-      <CrockeryListModal show={showCrockeryModal} onHide={() => setShowCrockeryModal(false)} booking={booking} />
+      <BuffetCountModal
+        show={activeModal === 'buffet'}
+        onHide={() => setActiveModal('none')}
+        booking={booking}
+        onSaved={() => setActiveModal('none')}
+        onExited={() => {
+          if (activeModal === 'none') setActiveModal('crockery')
+        }}
+      />
+      <CrockeryListModal show={activeModal === 'crockery'} onHide={() => setActiveModal('none')} booking={booking} />
     </>
   )
 }

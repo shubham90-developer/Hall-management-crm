@@ -173,6 +173,7 @@ const BookingSchema = new Schema<IBooking>(
     cgst: { type: Number, default: 0 },
     sgst: { type: Number, default: 0 },
     hallFinalAmount: { type: Number, default: 0 },
+    noOfBuffets: { type: Number, default: 0 },
     crockeryList: [
       {
         name: { type: String, required: true },
