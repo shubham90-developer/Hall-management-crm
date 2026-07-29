@@ -11,7 +11,6 @@ export const enquirySchema = z.object({
   date3: z.coerce.date().optional(),
   guestCount: z.coerce.number().optional(),
   notes: z.string().optional(),
-  isJain: z.boolean().optional(),
   status: z.enum(["Pending", "Confirmed", "Hold"]).optional(),
   timeSlot: z.enum(["Morning", "Afternoon", "Evening", "Night"]).optional(),
 });
@@ -30,7 +29,6 @@ export const enquiryUpdateValidation = z.object({
   date3: z.coerce.date().optional(),
   guestCount: z.coerce.number().optional(),
   notes: z.string().optional(),
-  isJain: z.boolean().optional(),
   status: z.enum(["Pending", "Confirmed", "Hold"]).optional(),
   timeSlot: z.enum(["Morning", "Afternoon", "Evening", "Night"]).optional(),
 });

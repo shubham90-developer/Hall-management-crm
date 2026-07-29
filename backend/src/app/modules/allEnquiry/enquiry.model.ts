@@ -35,9 +35,6 @@ const EnquirySchema: Schema = new Schema(
     notes: {
       type: String,
     },
-    isJain: {
-      type: Boolean,
-    },
     timeSlot: {
       type: String,
       enum: ["Morning", "Afternoon", "Evening", "Night"],
