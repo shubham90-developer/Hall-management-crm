@@ -24,6 +24,7 @@ export interface IBooking extends Document {
   other: { id: Types.ObjectId; startTime: string; endTime: string }[];
   starters: Types.ObjectId[];
   chatMenu: Types.ObjectId[];
+  menu_note: string;
   menuType?: "buffet" | "starters" | "chatmenu" | "customize";
   selectedBuffetId?: Types.ObjectId | null;
   totalAmount: Number;

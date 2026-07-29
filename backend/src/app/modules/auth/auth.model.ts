@@ -7,6 +7,7 @@ export interface IUserDocument extends Document {
   password: string;
   logo: string;
   secondaryLogo: string;
+  role: "admin" | "manager";
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -20,6 +21,7 @@ const UserSchema = new Schema<IUserDocument>(
       trim: true,
       lowercase: true,
     },
+    role: { type: String, enum: ["admin", "manager"], default: "admin" },
     password: { type: String, required: true, select: false },
     logo: { type: String, default: "" },
     secondaryLogo: { type: String, default: "" },

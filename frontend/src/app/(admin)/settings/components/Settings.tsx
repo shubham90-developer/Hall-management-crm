@@ -120,11 +120,11 @@ const Settings = () => {
     <>
       <Card>
         <CardHeader>
-          <CardTitle as={'h4'}>Update Logo</CardTitle>
+          <CardTitle as={'h4'}>Update Hall Logo</CardTitle>
         </CardHeader>
         <CardBody>
           <div className="mb-3">
-            <label className="form-label">Logo Image</label>
+            <label className="form-label">Hall Logo</label>
             <input type="file" accept="image/*" className="form-control" onChange={handleLogoChange} />
           </div>
           {displayImage && (
@@ -133,18 +133,18 @@ const Settings = () => {
             </div>
           )}
           <button type="button" className="btn btn-primary w-100 mt-1" disabled={isLogoUploading} onClick={handleLogoUpload}>
-            {isLogoUploading ? 'Uploading...' : 'Upload Logo'}
+            {isLogoUploading ? 'Uploading...' : 'Upload Hall Logo'}
           </button>
         </CardBody>
       </Card>
 
       <Card className="mt-4">
         <CardHeader>
-          <CardTitle as={'h4'}>Update Secondary Logo</CardTitle>
+          <CardTitle as={'h4'}>Update Catering Logo</CardTitle>
         </CardHeader>
         <CardBody>
           <div className="mb-3">
-            <label className="form-label">Secondary Logo Image</label>
+            <label className="form-label">Catering Logo</label>
             <input type="file" accept="image/*" className="form-control" onChange={handleSecondaryLogoChange} />
           </div>
           {secondaryDisplayImage && (
@@ -153,7 +153,7 @@ const Settings = () => {
             </div>
           )}
           <button type="button" className="btn btn-primary w-100 mt-1" disabled={isSecondaryLogoUploading} onClick={handleSecondaryLogoUpload}>
-            {isSecondaryLogoUploading ? 'Uploading...' : 'Upload Secondary Logo'}
+            {isSecondaryLogoUploading ? 'Uploading...' : 'Upload Catering Logo'}
           </button>
         </CardBody>
       </Card>

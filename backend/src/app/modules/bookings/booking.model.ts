@@ -104,6 +104,9 @@ const BookingSchema = new Schema<IBooking>(
         ref: "ChatMenu",
       },
     ],
+    menu_note: {
+      type: String,
+    },
     menuType: {
       type: String,
       enum: ["buffet", "starters", "chatmenu", "customize"],

@@ -18,7 +18,6 @@ const initialFormState = {
   date3: '',
   guestCount: '',
   notes: '',
-  isJain: false,
   timeSlot: 'Morning',
   status: 'Pending',
 }
@@ -175,23 +174,6 @@ const AddEnquiryDrawer = ({ onAdd }: any) => {
               />
             </div>
 
-            {/* isJain */}
-            <div className="col-md-4">
-              <label className="form-label">Jain Food Required</label>
-              <select
-                className="form-select"
-                name="isJain"
-                value={String(formData.isJain)}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    isJain: e.target.value === 'true',
-                  }))
-                }>
-                <option value="false">No</option>
-                <option value="true">Yes</option>
-              </select>
-            </div>
             <div className="col-md-4">
               <label className="form-label">Time Slot</label>
               <select className="form-select" name="timeSlot" value={formData.timeSlot} onChange={handleChange}>

@@ -9,9 +9,15 @@ import {
   ChangePasswordValidation,
 } from "./auth.validation";
 import { IUserPayload } from "./auth.interface";
-const generateToken = (id: string, username: string, email: string): string => {
+
+const generateToken = (
+  id: string,
+  username: string,
+  email: string,
+  role: string, // ← added
+): string => {
   return jwt.sign(
-    { id, username, email },
+    { id, username, email, role }, // ← added
     process.env.JWT_SECRET as string,
     { expiresIn: process.env.JWT_EXPIRES_IN || "7d" } as jwt.SignOptions,
   );
@@ -23,7 +29,9 @@ export const register = async (
   next: NextFunction,
 ) => {
   try {
-    const { username, email, password } = RegisterValidation.parse(req.body);
+    const { username, email, password, role } = RegisterValidation.parse(
+      req.body,
+    ); // ← role added
 
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
@@ -33,13 +41,14 @@ export const register = async (
       return;
     }
 
-    const newUser = new User({ username, email, password });
+    const newUser = new User({ username, email, password, role }); // ← role added
     await newUser.save();
 
     const token = generateToken(
       newUser._id.toString(),
       newUser.username,
       newUser.email,
+      newUser.role, // ← added
     );
 
     res.json({
@@ -74,7 +83,12 @@ export const login = async (
       return;
     }
 
-    const token = generateToken(user._id.toString(), user.username, user.email);
+    const token = generateToken(
+      user._id.toString(),
+      user.username,
+      user.email,
+      user.role, // ← added
+    );
 
     const safeUser = await User.findById(user._id);
 

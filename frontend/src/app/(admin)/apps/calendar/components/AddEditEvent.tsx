@@ -30,6 +30,7 @@ import { IBooking } from '@/store/bookingApi'
 import { useRouter } from 'next/navigation'
 import { useCreateInvoiceMutation } from '@/store/invoiceApi'
 import InvoiceAmountDetails from '@/app/(admin)/invoice/amountDetails'
+import { useGetMeQuery } from '@/store/authApi'
 type TabType = 'booking' | 'menu' | 'view' | 'pricing' | 'invoice'
 
 interface Props {
@@ -41,6 +42,9 @@ interface Props {
 }
 
 const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', selectedBookingId = null }: Props) => {
+  const { data: currentUser } = useGetMeQuery()
+  const isManager = currentUser?.role === 'manager'
+
   const [activeTab, setActiveTab] = useState<TabType | null>(isEditable ? null : 'booking')
   const [selectedMenu, setSelectedMenu] = useState('')
   const [selectedStarters, setSelectedStarters] = useState<string[]>([])
@@ -60,7 +64,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
   const [mainModalVisible, setMainModalVisible] = useState(true)
   const [showHallPricingModal, setShowHallPricingModal] = useState(false)
   const [createdBooking, setCreatedBooking] = useState<IBooking | null>(null)
-  const totalSteps = 8
+  const totalSteps = 9
   const isSpecialMenuTab = selectedMenu === 'starters' || selectedMenu === 'chatmenu'
   const [enquiryDates, setEnquiryDates] = useState<{ date1?: string; date2?: string; date3?: string }>({})
   const router = useRouter()
@@ -107,6 +111,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
     menu: [] as string[],
     sweets: [] as string[],
     additional: [] as string[],
+    menu_note: '',
     externalItems: [] as string[],
     other: [] as { id: string; startTime: string; endTime: string }[],
   })
@@ -224,6 +229,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
         sweets: sanitizeIds(existingBooking.sweets || []),
         additional: sanitizeIds(existingBooking.additional || []),
         externalItems: sanitizeIds(existingBooking.externalItems || []),
+        menu_note: existingBooking.menu_note || '',
         other: (existingBooking.other || [])
           .filter((o: any) => o && o.id)
           .map((o: any) => ({
@@ -298,6 +304,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
         sweets: [],
         additional: [],
         externalItems: [],
+        menu_note: '',
         other: [] as { id: string; startTime: string; endTime: string }[],
       })
       setSelectedStarters([])
@@ -467,6 +474,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
           externalItems: sanitizeIds(menuForm.externalItems),
           starters: sanitizeIds(selectedStarters),
           chatMenu: sanitizeIds(selectedChatMenu),
+          menu_note: menuForm.menu_note,
           menuType: isNamedTab ? (selectedMenu as 'starters' | 'chatmenu' | 'customize') : 'buffet',
           selectedBuffetId: isNamedTab ? null : selectedMenu,
           other: menuForm.other
@@ -859,7 +867,10 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
                         <Button variant="light" onClick={toggle}>
                           Cancel
                         </Button>
-                        <Button variant="primary" onClick={isEditable ? handleUpdateBooking : handleSaveBooking} disabled={creating}>
+                        <Button
+                          variant="primary"
+                          onClick={isEditable ? handleUpdateBooking : handleSaveBooking}
+                          disabled={creating || (isEditable && isManager)}>
                           {isEditable ? '✏️ Update Booking' : creating ? 'Saving...' : '💾 Save Booking'}
                         </Button>
                       </div>
@@ -1043,8 +1054,29 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
                       onSeatingChange={(val) => setMenuForm((p) => ({ ...p, seatingArrangement: val }))}
                     />
                   )}
-                  {/* Menu Step 7 — Advance & Payment Method */}
                   {menuStep === 7 && (
+                    <div className="card border-0 shadow-sm">
+                      <div className="card-header bg-light-subtle">
+                        <h5 className="mb-0">📝 Menu Note</h5>
+                      </div>
+                      <div className="card-body">
+                        <Row className="g-3">
+                          <Col md={12}>
+                            <label className="form-label">📝 Note</label>
+                            <textarea
+                              rows={4}
+                              className="form-control"
+                              placeholder="Enter any note related to menu (e.g. spice preference, special instructions)"
+                              value={menuForm.menu_note}
+                              onChange={(e) => setMenuForm((p) => ({ ...p, menu_note: e.target.value }))}
+                            />
+                          </Col>
+                        </Row>
+                      </div>
+                    </div>
+                  )}
+                  {/* Menu Step 7 — Advance & Payment Method */}
+                  {menuStep === 8 && (
                     <div className="card border-0 shadow-sm">
                       <div className="card-header bg-light-subtle">
                         <h5 className="mb-0">💵 Advance &amp; Payment</h5>
@@ -1088,7 +1120,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
                   )}
 
                   {/* Menu Step 7 — Pricing */}
-                  {menuStep === 8 && (
+                  {menuStep === 9 && (
                     <AmountDetails
                       pricingForm={pricingForm}
                       onPricingChange={(key, val) => setPricingForm((p) => ({ ...p, [key]: val }))}
@@ -1161,13 +1193,13 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
                       </button>
                     )}
 
-                    {menuStep === 7 && (
+                    {menuStep === 8 && (
                       <button type="button" className="btn btn-success" onClick={handleSaveMenu} disabled={savingMenu}>
                         {savingMenu ? 'Saving...' : '💾 Save Menu'}
                       </button>
                     )}
 
-                    {menuStep === 8 && (
+                    {menuStep === 9 && (
                       <button type="button" className="btn btn-warning" onClick={handleSavePricing} disabled={savingPrice}>
                         {savingPrice ? 'Saving...' : '💰 Save Pricing'}
                       </button>

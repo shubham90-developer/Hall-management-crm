@@ -72,6 +72,7 @@ export interface IBooking {
   hallFinalAmount?: number
   hallAmountMethod?: string
   crockeryList?: ICrockeryItem[]
+  menu_note: string
   noOfBuffets?: number
   createdAt: string
   updatedAt: string
@@ -124,6 +125,7 @@ interface IUpdateMenuBooking {
   externalItems?: string[]
   starters?: string[]
   chatMenu?: string[]
+  menu_note: string
   menuType?: 'buffet' | 'starters' | 'chatmenu' | 'customize'
   selectedBuffetId?: string | null
   other?: { id: string; startTime: string; endTime: string }[]

@@ -60,6 +60,7 @@ export const MenuBookingValidation = z.object({
   externalItems: z.array(objectId("External")).default([]),
   starters: z.array(objectId("Starters")).default([]),
   chatMenu: z.array(objectId("ChatMenu")).default([]),
+  menu_note: z.string().min(1, "minimum 1 character is required for menu note"),
   menuType: z.enum(["buffet", "starters", "chatmenu", "customize"]).optional(),
   selectedBuffetId: objectId("BuffetName").optional().nullable(),
   mealTime: z.string().optional().nullable(),

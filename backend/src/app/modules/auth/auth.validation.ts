@@ -1,9 +1,10 @@
 import { z } from "zod";
 
 export const RegisterValidation = z.object({
-  username: z.string("Username is required").min(3).max(30).trim(),
-  email: z.string("Email is required").email("Invalid email").trim(),
-  password: z.string("Password is required").min(6),
+  username: z.string().min(3).max(30).trim(),
+  email: z.string().email().trim(),
+  password: z.string().min(6),
+  role: z.enum(["admin", "manager"]).optional().default("admin"),
 });
 
 export const LoginValidation = z.object({
