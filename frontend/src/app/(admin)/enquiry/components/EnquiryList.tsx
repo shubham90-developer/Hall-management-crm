@@ -89,8 +89,13 @@ const EnquiryList = () => {
     })
   }
 
-  // Simple event dates (date1/date2/date3) don't have a time component like createdAt,
-  // so they're formatted separately and safely fall back when missing
+  const openWhatsApp = () => {
+    if (!selectedEnquiry?.mobileNo) return
+    const cleanNumber = selectedEnquiry.mobileNo.replace(/[^0-9]/g, '')
+    const message = `Hi ${selectedEnquiry.customerName}, thank you for your enquiry! We'll get back to you shortly regarding your event.`
+    window.open(`https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`, '_blank')
+  }
+
   const formatSimpleDate = (dateStr?: string) => {
     if (!dateStr) return null
     const d = new Date(dateStr)
@@ -402,6 +407,10 @@ const EnquiryList = () => {
           )}
         </Modal.Body>
         <Modal.Footer className="border-0">
+          <Button variant="success" onClick={openWhatsApp}>
+            <IconifyIcon icon="ic:baseline-whatsapp" className="me-1" />
+            WhatsApp
+          </Button>
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Close
           </Button>
