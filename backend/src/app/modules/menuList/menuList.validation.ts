@@ -9,6 +9,8 @@ export const menuListSchema = z.object({
   grosaryName: z.array(z.object({ item: z.string(), qty: z.string() })),
   vegitablesName: z.array(z.object({ item: z.string(), qty: z.string() })),
   menuImage: z.string().optional(),
+  jain: z.preprocess((val) => val === "true" || val === true, z.boolean()),
+  note: z.string(),
   description: z.string().optional(),
 });
 
@@ -23,5 +25,6 @@ export const menuListUpdateValidation = z.object({
   grosaryName: z.array(z.object({ item: z.string(), qty: z.string() })),
   vegitablesName: z.array(z.object({ item: z.string(), qty: z.string() })),
   menuImage: z.string().optional(),
+  jain: z.preprocess((val) => val === "true" || val === true, z.boolean()),
   description: z.string().optional(),
 });

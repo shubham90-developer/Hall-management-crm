@@ -47,6 +47,7 @@ export interface IMenuList {
   vegitablesName: IVegitables[]
   menuImage?: string
   description?: string
+  jain: boolean
   status: string
 }
 

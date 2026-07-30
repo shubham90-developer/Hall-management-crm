@@ -46,6 +46,11 @@ const MenuListScheme: Schema = new Schema(
       type: String,
       default: "",
     },
+    jain: {
+      type: Boolean,
+      default: false,
+    },
+
     isDeleted: {
       type: Boolean,
       default: false,

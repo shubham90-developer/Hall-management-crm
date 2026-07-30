@@ -27,6 +27,7 @@ const AddMenuDrawer = ({ onAdd }: any) => {
     grosaryName: [] as QtyItem[],
     vegitablesName: [] as QtyItem[],
     description: '',
+    jain: false,
     status: 'Active',
   })
 
@@ -97,6 +98,7 @@ const AddMenuDrawer = ({ onAdd }: any) => {
         grosaryName: [] as QtyItem[],
         vegitablesName: [] as QtyItem[],
         description: '',
+        jain: false,
         status: 'Active',
       })
       setMenuImageFile(null)
@@ -228,12 +230,25 @@ const AddMenuDrawer = ({ onAdd }: any) => {
                   </select>
                 </div>
               </Col>
-              <Col md={12}>
+              <Col md={6}>
                 {/* QTY */}
                 <div className="mb-3">
                   <label className="form-label">QTY</label>
 
                   <input type="text" className="form-control" placeholder="" name="qty" value={formData.qty} onChange={handleChange} />
+                </div>
+              </Col>
+              <Col md={6}>
+                <div className="mb-3">
+                  <label className="form-label">Jain</label>
+                  <select
+                    name="jain"
+                    className="form-select"
+                    value={String(formData.jain ?? false)}
+                    onChange={(e) => setFormData({ ...formData, jain: e.target.value === 'true' })}>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                  </select>
                 </div>
               </Col>
               <Col md={6}>

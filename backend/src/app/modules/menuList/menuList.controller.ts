@@ -8,7 +8,6 @@ import { MenuCategory } from "../menuCategory/menuCategory.model";
 import { CrockeryList } from "../crockeryList/crockeryList.model";
 import { GrosaryList } from "../grosaryList/grosaryList.model";
 
-// multipart/form-data sends arrays as JSON strings — parse them back
 const parseIfString = (v: any) =>
   typeof v === "string" ? JSON.parse(v) : v || [];
 
@@ -22,7 +21,7 @@ export const createMenuList = async (
     const crocekryName = parseIfString(req.body.crocekryName);
     const grosaryName = parseIfString(req.body.grosaryName);
     const vegitablesName = parseIfString(req.body.vegitablesName);
-    const { categoryName, itemName, qty, description } = req.body;
+    const { categoryName, itemName, qty, description, jain } = req.body;
 
     // image comes from multer/cloudinary, not req.body
     const menuImage = req.file ? (req.file as any).path : "";
@@ -51,6 +50,7 @@ export const createMenuList = async (
       grosaryName,
       vegitablesName,
       menuImage,
+      jain,
       description,
     });
 

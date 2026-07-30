@@ -10,6 +10,7 @@ export interface IMenuList extends Document {
   vegitablesName: Types.ObjectId[];
   menuImage: string;
   description: string;
+  jain: boolean;
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;

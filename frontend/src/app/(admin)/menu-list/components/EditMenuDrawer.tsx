@@ -34,6 +34,7 @@ const EditMenuDrawer = ({ item }: any) => {
     itemName: '',
     crocekryName: [] as QtyItem[],
     qty: '',
+    jain: false,
     grosaryName: [] as QtyItem[],
     vegitablesName: [] as QtyItem[],
     description: '',
@@ -75,6 +76,8 @@ const EditMenuDrawer = ({ item }: any) => {
         crocekryName: toQtyItems(data.crocekryName),
 
         qty: data.qty || '',
+
+        jain: Boolean(data.jain),
 
         grosaryName: toQtyItems(data.grosaryName),
 
@@ -137,6 +140,7 @@ const EditMenuDrawer = ({ item }: any) => {
       const body = new FormData()
       body.append('itemName', formData.itemName)
       body.append('qty', formData.qty)
+      body.append('jain', String(formData.jain))
       body.append('description', formData.description)
       body.append('categoryName', formData.categoryName)
       body.append('buffetName', JSON.stringify(formData.buffetName))
@@ -282,7 +286,7 @@ const EditMenuDrawer = ({ item }: any) => {
                 </div>
               </Col>
 
-              <Col md={12}>
+              <Col md={6}>
                 {/* QTY */}
                 <div className="mb-3">
                   <label className="form-label">QTY</label>
@@ -290,6 +294,22 @@ const EditMenuDrawer = ({ item }: any) => {
                   <input type="text" className="form-control" placeholder="" name="qty" value={formData.qty} onChange={handleChange} />
                 </div>
               </Col>
+
+              <Col md={6}>
+                {/* Jain */}
+                <div className="mb-3">
+                  <label className="form-label">Jain</label>
+                  <select
+                    name="jain"
+                    className="form-select"
+                    value={String(formData.jain)}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, jain: e.target.value === 'true' }))}>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                  </select>
+                </div>
+              </Col>
+
               <Col md={6}>
                 <div className="mb-3">
                   <label className="form-label">Menu Image</label>
