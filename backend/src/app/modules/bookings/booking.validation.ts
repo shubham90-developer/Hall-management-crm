@@ -54,7 +54,14 @@ export const MenuBookingValidation = z.object({
   Muhurat: z.string().optional().nullable(),
   guests: z.number().min(0).default(0).optional(),
   seatingArrangement: z.string().optional().nullable(),
-  menu: z.array(objectId("Menu")).default([]),
+  menu: z
+    .array(
+      z.object({
+        id: objectId("Menu"),
+        note: z.string().optional().default(""),
+      }),
+    )
+    .default([]),
   sweets: z.array(objectId("Sweet")).default([]),
   additional: z.array(objectId("Additional")).default([]),
   externalItems: z.array(objectId("External")).default([]),

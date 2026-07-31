@@ -17,7 +17,7 @@ export interface IBooking extends Document {
   Muhurat: String;
   guests: Number;
   seatingArrangement: String;
-  menu: Types.ObjectId[];
+  menu: { id: Types.ObjectId; note?: string }[];
   sweets: Types.ObjectId[];
   additional: Types.ObjectId[];
   externalItems: Types.ObjectId[];

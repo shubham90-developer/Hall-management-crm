@@ -76,8 +76,15 @@ const BookingSchema = new Schema<IBooking>(
     },
     menu: [
       {
-        type: Schema.Types.ObjectId,
-        ref: "MenuList",
+        menuId: {
+          type: Schema.Types.ObjectId,
+          ref: "MenuList",
+          required: true,
+        },
+        note: {
+          type: String,
+          default: "",
+        },
       },
     ],
     sweets: [

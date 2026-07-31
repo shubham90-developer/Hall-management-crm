@@ -136,7 +136,8 @@ export const getAllBookings = async (
       .populate("functionType")
       .populate("hall")
       .populate({
-        path: "menu",
+        path: "menu.id",
+        model: "MenuList",
         populate: [
           { path: "crocekryName.item", model: "CrockeryList" },
           { path: "grosaryName.item", model: "GrosaryList" },
@@ -182,7 +183,8 @@ export const getBookingById = async (
       .populate("functionType")
       .populate("hall")
       .populate({
-        path: "menu",
+        path: "menu.id",
+        model: "MenuList",
         populate: [
           { path: "buffetName", model: "BuffetName" },
           { path: "categoryName", model: "MenuCategory" },
@@ -319,7 +321,8 @@ export const updateBooking = async (
       .populate("functionType")
       .populate("hall")
       .populate({
-        path: "menu",
+        path: "menu.id",
+        model: "MenuList",
         populate: [
           { path: "buffetName", model: "BuffetName" },
           { path: "categoryName", model: "MenuCategory" },
@@ -480,7 +483,8 @@ export const getDayRequirements = async (
       functionDate: { $gte: start, $lt: end },
       status: { $ne: "Cancelled" },
     }).populate({
-      path: "menu",
+      path: "menu.id",
+      model: "MenuList",
       populate: [
         { path: "crocekryName.item", model: "CrockeryList" },
         { path: "grosaryName.item", model: "GrosaryList" },
