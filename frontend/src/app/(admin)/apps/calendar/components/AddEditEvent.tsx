@@ -179,7 +179,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
 
   // ── Prefill form when editing ────────────────────────────────────
   useEffect(() => {
-    if (existingBooking && isEditable && prefilledBookingIdRef.current !== existingBooking._id) {
+    if (open && existingBooking && isEditable && prefilledBookingIdRef.current !== existingBooking._id) {
       prefilledBookingIdRef.current = existingBooking._id
       setBookingId(existingBooking._id)
       setEnquiryDates({
@@ -264,7 +264,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
 
       setActiveTab(null)
     }
-  }, [existingBooking, isEditable])
+  }, [existingBooking, isEditable, open])
 
   useEffect(() => {
     if (open) {

@@ -250,6 +250,11 @@ const SpecialMenu = ({
                               onClick={(e) => e.stopPropagation()}
                             />
                           </div>
+                          {item.jain && (
+                            <span className="position-absolute top-0 start-0 m-2 badge bg-success" style={{ zIndex: 2 }}>
+                              🌱 Jain
+                            </span>
+                          )}
 
                           {item.menuImage ? (
                             <img src={item.menuImage} alt={item.itemName} style={{ width: '100%', height: 110, objectFit: 'cover' }} />

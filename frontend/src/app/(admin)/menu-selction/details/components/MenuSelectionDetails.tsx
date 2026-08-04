@@ -324,6 +324,10 @@ const MenuSelectionDetails = ({ bookingId }: Props) => {
                   🍽️ <span>Download Crockery List</span>
                 </button>
 
+                <Link href={`/print-menu/${booking._id}`} className="btn btn-success d-flex align-items-center justify-content-center gap-2 py-2">
+                  🍽️ <span>Print Menu</span>
+                </Link>
+
                 {/* <Link
                 href={`/menu-selction/grosary/${booking._id}`}
                 className="btn btn-warning d-flex align-items-center justify-content-center gap-2 py-2">
