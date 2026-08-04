@@ -10,6 +10,7 @@ import { saveAs } from 'file-saver'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import Swal from 'sweetalert2'
+import { useGetMeQuery } from '@/store/authApi'
 const minutesToTime = (minutes: number): string => {
   const h = Math.floor(minutes / 60)
   const m = minutes % 60
@@ -23,7 +24,8 @@ const AllBookings = () => {
   const [statusFilter, setStatusFilter] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
-
+  const { data: currentUser } = useGetMeQuery()
+  const isManager = currentUser?.role === 'manager'
   const { data: bookings = [], isLoading } = useGetAllBookingsQuery()
   const [deleteBooking] = useDeleteBookingMutation()
 
@@ -290,9 +292,11 @@ const AllBookings = () => {
                                 <IconifyIcon icon="solar:eye-broken" className="align-middle fs-18" />
                               </Link>
 
-                              <button className="btn btn-soft-danger btn-sm" onClick={() => handleDelete(item._id)}>
-                                <IconifyIcon icon="solar:trash-bin-minimalistic-2-broken" className="align-middle fs-18" />
-                              </button>
+                              {!isManager && (
+                                <button className="btn btn-soft-danger btn-sm" onClick={() => handleDelete(item._id)}>
+                                  <IconifyIcon icon="solar:trash-bin-minimalistic-2-broken" className="align-middle fs-18" />
+                                </button>
+                              )}
                             </div>
                           </td>
                         </tr>
