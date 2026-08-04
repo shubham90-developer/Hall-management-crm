@@ -7,12 +7,6 @@ export interface ICrockeryItem {
   currentQty: number
   additionalQty: number
 }
-
-export interface IMenuSelection {
-  id: string
-  note?: string
-}
-
 export interface IBooking {
   _id: string
   bookingNo?: string
@@ -52,7 +46,7 @@ export interface IBooking {
   guests?: number
   seatingArrangement?: string
   mealTime?: string | null
-  menu?: IMenuSelection[]
+  menu?: string[]
   sweets?: string[]
   additional?: string[]
   externalItems?: string[]
@@ -125,7 +119,7 @@ interface IUpdateMenuBooking {
   guests?: number
   seatingArrangement?: string
   mealTime?: string | null
-  menu?: IMenuSelection[]
+  menu?: string[]
   sweets?: string[]
   additional?: string[]
   externalItems?: string[]

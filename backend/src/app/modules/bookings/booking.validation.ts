@@ -57,7 +57,7 @@ export const MenuBookingValidation = z.object({
   menu: z
     .array(
       z.object({
-        id: objectId("Menu"),
+        menuId: objectId("Menu"),
         note: z.string().optional().default(""),
       }),
     )
