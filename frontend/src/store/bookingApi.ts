@@ -46,7 +46,7 @@ export interface IBooking {
   guests?: number
   seatingArrangement?: string
   mealTime?: string | null
-  menu?: string[]
+  menu?: { menuId: string | { _id: string; itemName?: string; [key: string]: any }; note?: string }[]
   sweets?: string[]
   additional?: string[]
   externalItems?: string[]
@@ -119,7 +119,7 @@ interface IUpdateMenuBooking {
   guests?: number
   seatingArrangement?: string
   mealTime?: string | null
-  menu?: string[]
+  menu?: { menuId: string; note?: string }[]
   sweets?: string[]
   additional?: string[]
   externalItems?: string[]

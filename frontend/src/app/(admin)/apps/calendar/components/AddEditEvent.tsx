@@ -69,7 +69,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
   const [enquiryDates, setEnquiryDates] = useState<{ date1?: string; date2?: string; date3?: string }>({})
   const router = useRouter()
   const [createInvoice, { isLoading: savingInvoice }] = useCreateInvoiceMutation()
-
+  const [menuNotes, setMenuNotes] = useState<Record<string, string>>({})
   // ── Invoice tab state (independent from booking's own guests/advance) ──
   const [invoiceGuests, setInvoiceGuests] = useState(0)
   const [invoiceAdvance, setInvoiceAdvance] = useState(0)
@@ -158,7 +158,8 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
     const m = (minutes % 60).toString().padStart(2, '0')
     return `${h}:${m}`
   }
-  const sanitizeIds = (ids: any[]): string[] => ids.map((id) => (typeof id === 'object' ? id._id : id)).filter(Boolean)
+  const sanitizeIds = (ids: any[]): string[] => ids.map((id) => (typeof id === 'object' ? id._id || id.menuId?._id || id.menuId : id)).filter(Boolean)
+  const extractMenuIds = (menuArr: any[]): string[] => menuArr.map((m) => (typeof m.menuId === 'object' ? m.menuId?._id : m.menuId)).filter(Boolean)
   // ── Phone search ─────────────────────────────────────────────────
   useEffect(() => {
     if (phone.length >= 3) searchEnquiry({ phone })
@@ -225,7 +226,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
         mealTime: existingBooking.mealTime || '',
         guests: existingBooking.guests || 0,
         seatingArrangement: existingBooking.seatingArrangement || '',
-        menu: sanitizeIds(existingBooking.menu || []),
+        menu: extractMenuIds(existingBooking.menu || []),
         sweets: sanitizeIds(existingBooking.sweets || []),
         additional: sanitizeIds(existingBooking.additional || []),
         externalItems: sanitizeIds(existingBooking.externalItems || []),
@@ -238,6 +239,12 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
             endTime: o.endTime || '',
           })),
       })
+      const notesMap: Record<string, string> = {}
+      ;(existingBooking.menu || []).forEach((m: any) => {
+        const id = typeof m.menuId === 'object' ? m.menuId._id : m.menuId
+        if (id) notesMap[id] = m.note || ''
+      })
+      setMenuNotes(notesMap)
       setPricingForm({
         totalAmount: existingBooking.totalAmount || 0,
         additionalAmount: existingBooking.additionalAmount || 0,
@@ -307,6 +314,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
         menu_note: '',
         other: [] as { id: string; startTime: string; endTime: string }[],
       })
+      setMenuNotes({})
       setSelectedStarters([])
       setSelectedChatMenu([])
       setPricingForm({
@@ -468,7 +476,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
           guests: menuForm.guests,
           seatingArrangement: menuForm.seatingArrangement,
           mealTime: menuForm.mealTime,
-          menu: sanitizeIds(menuForm.menu),
+          menu: menuForm.menu.map((id) => ({ menuId: id, note: menuNotes[id] || '' })),
           sweets: sanitizeIds(menuForm.sweets),
           additional: sanitizeIds(menuForm.additional),
           externalItems: sanitizeIds(menuForm.externalItems),
@@ -986,6 +994,8 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
                       selectedSweets={menuForm.sweets}
                       selectedAdditional={menuForm.additional}
                       onMenuChange={(ids) => setMenuForm((p) => ({ ...p, menu: ids }))}
+                      menuNotes={menuNotes}
+                      onNoteChange={(id, note) => setMenuNotes((p) => ({ ...p, [id]: note }))}
                       onSweetsChange={(ids) => setMenuForm((p) => ({ ...p, sweets: ids }))}
                       onAdditionalChange={(ids) => setMenuForm((p) => ({ ...p, additional: ids }))}
                       externalItemsList={externalItemsList}

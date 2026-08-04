@@ -136,7 +136,7 @@ export const getAllBookings = async (
       .populate("functionType")
       .populate("hall")
       .populate({
-        path: "menu.id",
+        path: "menu.menuId",
         model: "MenuList",
         populate: [
           { path: "crocekryName.item", model: "CrockeryList" },
@@ -183,7 +183,7 @@ export const getBookingById = async (
       .populate("functionType")
       .populate("hall")
       .populate({
-        path: "menu.id",
+        path: "menu.menuId",
         model: "MenuList",
         populate: [
           { path: "buffetName", model: "BuffetName" },
@@ -321,7 +321,7 @@ export const updateBooking = async (
       .populate("functionType")
       .populate("hall")
       .populate({
-        path: "menu.id",
+        path: "menu.menuId",
         model: "MenuList",
         populate: [
           { path: "buffetName", model: "BuffetName" },
@@ -425,7 +425,7 @@ export const getUpcomingExternalBookings = async (
       status: { $ne: "Cancelled" },
     })
       .populate("enquiry")
-      .populate("menu", "itemName")
+      .populate("menu.menuId", "itemName")
       .populate("sweets", "itemName")
       .populate("additional", "itemName")
       .sort({ bookingDate: 1 });
@@ -439,7 +439,7 @@ export const getUpcomingExternalBookings = async (
         ];
 
         const matchedItems = allItems
-          .map((item) => item?.itemName?.trim())
+          .map((item) => (item?.menuId?.itemName ?? item?.itemName)?.trim())
           .filter((name) => name && NOTIFY_ITEMS.includes(name));
 
         return matchedItems.length > 0
@@ -483,7 +483,7 @@ export const getDayRequirements = async (
       functionDate: { $gte: start, $lt: end },
       status: { $ne: "Cancelled" },
     }).populate({
-      path: "menu.id",
+      path: "menu.menuId",
       model: "MenuList",
       populate: [
         { path: "crocekryName.item", model: "CrockeryList" },

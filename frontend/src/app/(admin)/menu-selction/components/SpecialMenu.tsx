@@ -32,6 +32,8 @@ interface Props {
   selectedChatMenu?: string[]
   onStartersChange?: (ids: string[]) => void
   onChatMenuChange?: (ids: string[]) => void
+  menuNotes?: Record<string, string>
+  onNoteChange?: (menuId: string, note: string) => void
 }
 
 const selectStyles = {
@@ -63,6 +65,8 @@ const SpecialMenu = ({
   selectedChatMenu = [],
   onStartersChange,
   onChatMenuChange,
+  menuNotes = {},
+  onNoteChange,
 }: Props) => {
   const [internalActiveCategory, setInternalActiveCategory] = React.useState<string>('')
   const activeCategory = activeCategoryProp ?? internalActiveCategory
@@ -267,6 +271,18 @@ const SpecialMenu = ({
                             )}
 
                             {item._kind !== 'menu' && <span className="badge bg-warning-subtle text-dark">₹{item.price}/-</span>}
+
+                            {item._kind === 'menu' && (
+                              <textarea
+                                className="form-control form-control-sm mt-2"
+                                rows={2}
+                                placeholder="Add note"
+                                value={menuNotes[item._id] || ''}
+                                onClick={(e) => e.stopPropagation()}
+                                onFocus={(e) => e.stopPropagation()}
+                                onChange={(e) => onNoteChange?.(item._id, e.target.value)}
+                              />
+                            )}
                           </div>
                         </div>
                       </div>
