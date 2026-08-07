@@ -229,17 +229,17 @@ const EditEnquiryDrawer = ({ item }: any) => {
             </div>
 
             {/* status */}
-            <div className="col-md-6">
+            {/* <div className="col-md-6">
               <label className="form-label">Status</label>
               <select className="form-select" name="status" value={formData.status} onChange={handleChange}>
                 <option value="Pending">Pending</option>
                 <option value="Confirmed">Confirmed</option>
                 <option value="Hold">Hold</option>
               </select>
-            </div>
+            </div> */}
 
             {/* function */}
-            <div className="col-md-6">
+            <div className="col-md-4">
               <label className="form-label">Function Type</label>
               <select className="form-select" name="functionName" value={formData.functionName} onChange={handleChange}>
                 <option value="">Select Function Type</option>
