@@ -22,6 +22,7 @@ export interface IEnquiry {
   notes?: string
   status: string
   timeSlot: string
+  address: string
   isDeleted: boolean
   createdAt: string
   updatedAt: string
@@ -40,6 +41,7 @@ interface ICreateEnquiry {
   alternateMobileNo?: string
   email?: string
   functionName: string
+  address: string
   date1?: string
   date2?: string
   date3?: string

@@ -284,14 +284,7 @@ const Bill = ({ bookingId }: Props) => {
 
                 {/* TOTAL */}
                 <Row className="align-items-end">
-                  <Col md={7}>
-                    <div className="border rounded-4 p-3 h-100">
-                      <h6 className="fw-bold mb-2">Note</h6>
-                      <p className="small text-muted mb-0">भोजनाची पाने कमी झाल्यास अन्न बांधून दिले जाणार नाही व पैसे कमी होणार नाहीत.</p>
-                    </div>
-                  </Col>
-
-                  <Col md={5}>
+                  <Col md={12}>
                     <div className="soft-bg rounded-4 p-3">
                       <table className="table summary-table mb-0">
                         <tbody>

@@ -18,7 +18,7 @@ const initialFormState = {
   date3: '',
   guestCount: '',
   notes: '',
-
+  address: '',
   timeSlot: 'Morning',
   status: 'Pending',
 }
@@ -54,6 +54,7 @@ const EditEnquiryDrawer = ({ item }: any) => {
         date3: toDateInputValue(enquiryData.date3),
         guestCount: enquiryData.guestCount != null ? String(enquiryData.guestCount) : '',
         notes: enquiryData.notes || '',
+        address: enquiryData.address || '',
         timeSlot: enquiryData.timeSlot || 'Morning',
         status: enquiryData.status || 'Pending',
       })
@@ -169,6 +170,10 @@ const EditEnquiryDrawer = ({ item }: any) => {
             <div className="col-md-6">
               <label className="form-label">Email</label>
               <input type="email" className="form-control" placeholder="" name="email" value={formData.email} onChange={handleChange} />
+            </div>
+            <div className="col-md-12">
+              <label className="form-label">Address</label>
+              <textarea className="form-control" rows={2} name="address" value={formData.address} onChange={handleChange} />
             </div>
 
             {/* dates */}

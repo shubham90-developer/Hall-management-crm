@@ -355,6 +355,12 @@ const EnquiryList = () => {
                 </Col>
                 <Col md={6}>
                   <div className="p-3 rounded-3 h-100" style={{ background: '#f8f9fa' }}>
+                    <p className="text-muted small mb-1">📍 Address</p>
+                    <p className="fw-bold mb-0 text-break">{selectedEnquiry.address || '—'}</p>
+                  </div>
+                </Col>
+                <Col md={6}>
+                  <div className="p-3 rounded-3 h-100" style={{ background: '#f8f9fa' }}>
                     <p className="text-muted small mb-1">🗓️ Enquiry Date</p>
                     <p className="fw-bold mb-0">{formatEnquiryDate(selectedEnquiry.createdAt)}</p>
                   </div>

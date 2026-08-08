@@ -9,9 +9,9 @@ import { useGetAllBookingsQuery } from '@/store/bookingApi'
 
 const VegetablesRequirements = () => {
   const { data: bookings = [], isLoading, isError } = useGetAllBookingsQuery()
-  const [dateFilter, setDateFilter] = useState<string>('')
+  const [fromDate, setFromDate] = useState<string>('')
+  const [toDate, setToDate] = useState<string>('')
 
-  // one row per distinct function date, with how many bookings share it
   const dateGroups = useMemo(() => {
     const map: Record<string, number> = {}
 
@@ -25,12 +25,18 @@ const VegetablesRequirements = () => {
 
     return Object.entries(map)
       .map(([date, count]) => ({ date, count }))
-      .filter((group) => !dateFilter || group.date === dateFilter)
+      .filter((group) => {
+        if (fromDate && group.date < fromDate) return false
+        if (toDate && group.date > toDate) return false
+        return true
+      })
       .sort((a, b) => (a.date < b.date ? 1 : -1)) // newest first
-  }, [bookings, dateFilter])
+  }, [bookings, fromDate, toDate])
 
   if (isLoading) return <div>Loading...</div>
   if (isError) return <div>Error loading bookings</div>
+
+  const hasFilter = fromDate || toDate
 
   return (
     <Row>
@@ -39,18 +45,35 @@ const VegetablesRequirements = () => {
           <CardHeader className="d-flex justify-content-between align-items-center flex-wrap gap-2">
             <CardTitle as="h4">🥬 Vegetables Requirements</CardTitle>
 
-            <div className="d-flex align-items-center gap-2">
-              <div style={{ minWidth: 200 }}>
+            <div className="d-flex align-items-center gap-2 flex-wrap">
+              <div style={{ minWidth: 160 }}>
                 <CustomFlatpickr
                   className="form-control form-control-sm"
-                  placeholder="Filter by Function Date"
-                  value={dateFilter}
-                  onChange={(_, dateStr) => setDateFilter(dateStr)}
+                  placeholder="From Date"
+                  value={fromDate}
+                  onChange={(_, dateStr) => setFromDate(dateStr)}
                   options={{ dateFormat: 'Y-m-d' }}
                 />
               </div>
-              {dateFilter && (
-                <button type="button" className="btn btn-sm btn-light" onClick={() => setDateFilter('')}>
+
+              <div style={{ minWidth: 160 }}>
+                <CustomFlatpickr
+                  className="form-control form-control-sm"
+                  placeholder="To Date"
+                  value={toDate}
+                  onChange={(_, dateStr) => setToDate(dateStr)}
+                  options={{ dateFormat: 'Y-m-d' }}
+                />
+              </div>
+
+              {hasFilter && (
+                <button
+                  type="button"
+                  className="btn btn-sm btn-light"
+                  onClick={() => {
+                    setFromDate('')
+                    setToDate('')
+                  }}>
                   Clear
                 </button>
               )}
@@ -104,7 +127,7 @@ const VegetablesRequirements = () => {
                   ) : (
                     <tr>
                       <td colSpan={4} className="text-center">
-                        {dateFilter ? 'No bookings found on this date' : 'No bookings found'}
+                        {hasFilter ? 'No bookings found in this date range' : 'No bookings found'}
                       </td>
                     </tr>
                   )}

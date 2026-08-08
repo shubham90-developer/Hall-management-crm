@@ -345,6 +345,7 @@ const AddEditEvent = ({ open, toggle, isEditable = false, selectedDate = '', sel
       mobileNo: data.mobileNo,
       alternateMobileNo: data.alternateMobileNo,
       email: data.email,
+      address: data.address || '',
       functionType: data.functionName?._id || '',
       functionDate: data.date1 ? new Date(data.date1).toISOString().split('T')[0] : '',
     }))

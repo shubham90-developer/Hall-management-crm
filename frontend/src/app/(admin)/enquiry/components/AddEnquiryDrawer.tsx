@@ -18,6 +18,7 @@ const initialFormState = {
   date3: '',
   guestCount: '',
   notes: '',
+  address: '',
   timeSlot: 'Morning',
   status: 'Pending',
 }
@@ -139,6 +140,11 @@ const AddEnquiryDrawer = ({ onAdd }: any) => {
               <label className="form-label">Email</label>
               <input type="email" className="form-control" placeholder="" name="email" value={formData.email} onChange={handleChange} />
             </div>
+            {/* address */}
+            <div className="col-md-12">
+              <label className="form-label">Address</label>
+              <textarea className="form-control" rows={2} placeholder="" name="address" value={formData.address} onChange={handleChange} />
+            </div>
 
             {/* dates */}
             <div className="col-md-4">
@@ -178,9 +184,7 @@ const AddEnquiryDrawer = ({ onAdd }: any) => {
               <label className="form-label">Time Slot</label>
               <select className="form-select" name="timeSlot" value={formData.timeSlot} onChange={handleChange}>
                 <option value="Morning">Morning</option>
-                <option value="Afternoon">Afternoon</option>
                 <option value="Evening">Evening</option>
-                <option value="Night">Night</option>
               </select>
             </div>
             {/* guest count */}

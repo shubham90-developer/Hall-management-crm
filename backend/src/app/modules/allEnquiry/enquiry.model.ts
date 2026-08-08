@@ -45,6 +45,8 @@ const EnquirySchema: Schema = new Schema(
       enum: ["Pending", "Confirmed", "Hold"],
       default: "Pending",
     },
+
+    address: { type: String, default: "" },
     isDeleted: {
       type: Boolean,
       default: false,

@@ -10,7 +10,7 @@ import {
 } from "./booking.validation";
 import { HallType } from "../hallType/hallType.model";
 import { Counter } from "./booking.model";
-
+import { Enquiry } from "../allEnquiry/enquiry.model";
 const NOTIFY_ITEMS = ["ढोकळा", "सुरळीवाडी", "मोदक", "मसाला पान"];
 
 const checkHallConflict = async (
@@ -109,6 +109,13 @@ export const createBooking = async (
       ...rest,
     });
     await newBooking.save();
+
+    // 🔄 Sync address to linked Enquiry, if address was submitted
+    if (rest.address && newBooking.enquiry) {
+      await Enquiry.findByIdAndUpdate(newBooking.enquiry, {
+        address: rest.address,
+      });
+    }
 
     res.json({
       success: true,
@@ -249,6 +256,17 @@ export const updateBooking = async (
       const endTime = validateData.endTime ?? existingBooking.endTime;
 
       await checkHallConflict(hall, bookingDate, startTime, endTime, bookingId);
+
+      // 🔄 Sync address to linked Enquiry, if address was changed
+      if (
+        validateData.address &&
+        validateData.address !== existingBooking.address &&
+        existingBooking.enquiry
+      ) {
+        await Enquiry.findByIdAndUpdate(existingBooking.enquiry, {
+          address: validateData.address,
+        });
+      }
     } else if (step === "menu") {
       validateData = MenuBookingValidation.partial().parse(req.body);
     } else if (step === "pricing") {
@@ -259,25 +277,21 @@ export const updateBooking = async (
         additionalAmount = 0,
         specialMenuAmount = 0,
         gst = 0,
-
         discount = 0,
       } = parsedPricing;
 
       const advance = Number(existingBooking.advance || 0);
 
-      // Menu pricing — completely unchanged
       const { subtotalamount, grandTotal, finalAmount, pendingAmount } =
         calculatePricing(
           totalAmount,
           additionalAmount,
           specialMenuAmount,
-
           gst,
           discount,
           advance,
         );
 
-      // Hall pricing — separate track, independent of menu totals above
       const isNB = existingBooking.status === "NB";
       const hallAmount = Number(
         parsedPricing.hallAmount ?? existingBooking.hallAmount ?? 0,
